@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_overview"
+            android:title="Tổng quan" />
+        <item
+            android:id="@+id/nav_calendar_setup"
+            android:title="Cài đặt lịch" />
+        <item
+            android:id="@+id/nav_appointment"
+            android:title="Lịch khám" />
+        <item
+            android:id="@+id/nav_history"
+            android:title="Lịch sử khám" />
+        <item
+            android:id="@+id/nav_logout"
+            android:title="Đăng xuất" />
+    </group>
+
+</menu>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    android:background="@color/backgroundLight">
+
+    <ImageView
+    android:layout_width="80dp"
+    android:layout_height="80dp"
+    android:contentDescription="Service Icon" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp"
+        android:text="Quản lý Dịch vụ"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/black" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:text="Thêm mới, chỉnh sửa hoặc ẩn các dịch vụ khám chữa bệnh."
+        android:textSize="14sp"
+        android:textColor="@color/black"
+        android:gravity="center" />
+</LinearLayout>
