@@ -9,6 +9,8 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
 
@@ -21,15 +23,21 @@ import dagger.hilt.android.qualifiers.ApplicationContext;
 import dagger.hilt.components.SingletonComponent;
 import data.db.AdminDao;
 import data.db.AppDatabase;
+import data.db.AppointmentDao;
 import data.db.DoctorDao;
 import data.db.PatientDao;
 import data.db.PrescriptionDao;
+import data.db.ReviewDao;
 import data.db.ServiceDao;
 import data.db.UserDao;
+import data.db.WorkScheduleDao;
+import data.enums.Enum;
 import data.model.Admin;
+import data.model.Appointment;
 import data.model.Doctor;
 import data.model.Patient;
 import data.model.Prescription;
+import data.model.Review;
 import data.model.Service;
 import data.model.User;
 
@@ -90,6 +98,24 @@ public class AppModule {
         return db.serviceDao();
     }
 
+    @Provides
+    @Singleton
+    public AppointmentDao provideAppointmentDao(AppDatabase db) {
+        return db.appointmentDao();
+    }
+
+    @Provides
+    @Singleton
+    public ReviewDao provideReviewDao(AppDatabase db) {
+        return db.reviewDao();
+    }
+
+    @Provides
+    @Singleton
+    public WorkScheduleDao provideWorkScheduleDao(AppDatabase db) {
+        return db.workScheduleDao();
+    }
+
 
     // custom
     public void seedDatabase(AppDatabase db) {
@@ -145,7 +171,90 @@ public class AppModule {
             services.add(createService("Chụp X-quang", 200000, "SRV004"));
             services.add(createService("Khám tai mũi họng", 180000, "SRV005"));
             db.serviceDao().insertAll(services);
+
+            // Seed Appointments for testing
+            long doctorId = 1; // First doctor
+            long patientId = 1; // First patient
+            
+            Calendar calendar = Calendar.getInstance();
+            
+            // Upcoming appointment 1 - Tomorrow
+            calendar.add(Calendar.DAY_OF_MONTH, 1);
+            calendar.set(Calendar.HOUR_OF_DAY, 9);
+            calendar.set(Calendar.MINUTE, 0);
+            Appointment apt1 = createAppointment(doctorId, patientId, calendar.getTime(), "Khám định kỳ", Enum.AppointmentStatus.CONFIRMED);
+            
+            // Upcoming appointment 2 - In 3 days
+            calendar.add(Calendar.DAY_OF_MONTH, 2);
+            calendar.set(Calendar.HOUR_OF_DAY, 14);
+            Appointment apt2 = createAppointment(doctorId, patientId, calendar.getTime(), "Tái khám", Enum.AppointmentStatus.CONFIRMED);
+            
+            // Upcoming appointment 3 - In 5 days
+            calendar.add(Calendar.DAY_OF_MONTH, 2);
+            calendar.set(Calendar.HOUR_OF_DAY, 10);
+            Appointment apt3 = createAppointment(doctorId, patientId, calendar.getTime(), "Xét nghiệm máu", Enum.AppointmentStatus.CONFIRMED);
+            
+            // Completed appointments for stats
+            calendar.add(Calendar.DAY_OF_MONTH, -30);
+            for (int i = 0; i < 15; i++) {
+                Appointment completed = createAppointment(doctorId, patientId, calendar.getTime(), "Khám hoàn thành", Enum.AppointmentStatus.DONE);
+                db.appointmentDao().insert(completed);
+                calendar.add(Calendar.DAY_OF_MONTH, -2);
+            }
+            
+            // Cancelled appointments for stats
+            calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, -20);
+            for (int i = 0; i < 3; i++) {
+                Appointment cancelled = createAppointment(doctorId, patientId, calendar.getTime(), "Bệnh nhân hủy", Enum.AppointmentStatus.ABSENT);
+                db.appointmentDao().insert(cancelled);
+                calendar.add(Calendar.DAY_OF_MONTH, -3);
+            }
+            
+            db.appointmentDao().insert(apt1);
+            db.appointmentDao().insert(apt2);
+            db.appointmentDao().insert(apt3);
+            
+            // Seed Reviews for testing
+            Review review1 = createReview(doctorId, patientId, 1, 5, "Bác sĩ rất tận tình và chu đáo. Giải thích kỹ càng!");
+            Review review2 = createReview(doctorId, patientId, 2, 4, "Khám bệnh tốt, thời gian chờ hơi lâu");
+            Review review3 = createReview(doctorId, patientId, 3, 5, "Rất hài lòng với dịch vụ");
+            Review review4 = createReview(doctorId, patientId, 4, 5, "Bác sĩ chuyên nghiệp");
+            Review review5 = createReview(doctorId, patientId, 5, 4, "Tốt, sẽ quay lại");
+            
+            db.reviewDao().insert(review1);
+            db.reviewDao().insert(review2);
+            db.reviewDao().insert(review3);
+            db.reviewDao().insert(review4);
+            db.reviewDao().insert(review5);
         });
+    }
+
+    private Appointment createAppointment(long doctorId, long patientId, Date startDate, String description, Enum.AppointmentStatus status) {
+        Appointment apt = new Appointment();
+        apt.doctorId = doctorId;
+        apt.patientId = patientId;
+        apt.createdAt = new Date();
+        apt.startDate = startDate;
+        
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        calendar.add(Calendar.HOUR, 1);
+        apt.endDate = calendar.getTime();
+        
+        apt.description = description;
+        apt.status = status;
+        return apt;
+    }
+
+    private Review createReview(long doctorId, long patientId, long appointmentId, int rating, String description) {
+        Review review = new Review();
+        review.doctorId = doctorId;
+        review.patientId = patientId;
+        review.appointmentId = appointmentId;
+        review.rating = rating;
+        review.description = description;
+        return review;
     }
 
     private Prescription createPrescription(String name, double price, String code) {
