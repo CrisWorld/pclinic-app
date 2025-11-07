@@ -216,31 +216,158 @@ public class DoctorCalendarSetupFragment extends Fragment {
             return;
         }
 
-        // Delete existing schedules for this date first
-        workScheduleRepository.deleteSchedulesByDate(doctorId, selectedDate);
+        // Get all current slots for endTime lookup (before async operations)
+        List<TimeSlot> allSlots = new ArrayList<>();
+        allSlots.addAll(morningAdapter.getTimeSlots());
+        allSlots.addAll(afternoonAdapter.getTimeSlots());
 
-        // Save new schedules
-        for (TimeSlot slot : selectedSlots) {
-            WorkSchedule schedule = new WorkSchedule(
-                    doctorId,
-                    selectedDate,
-                    slot.getStartTime(),
-                    slot.getEndTime(),
-                    SLOT_DURATION
-            );
-            workScheduleRepository.createSchedule(schedule);
-        }
+        // Use CountDownLatch to wait for both async operations
+        java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(2);
+        final List<Appointment>[] appointmentsRef = new List[]{new ArrayList<>()};
+        final List<WorkSchedule>[] existingSchedulesRef = new List[]{new ArrayList<>()};
 
-        Toasty.success(requireContext(), 
-                "Đã lưu " + selectedSlots.size() + " khung giờ làm việc", 
-                Toast.LENGTH_SHORT).show();
+        // Get current appointments
+        appointmentRepository.getAppointmentsByDoctorAndDate(doctorId, selectedDate)
+                .observe(getViewLifecycleOwner(), appointments -> {
+                    if (appointments != null) {
+                        appointmentsRef[0] = appointments;
+                    }
+                    latch.countDown();
+                });
+
+        // Get current schedules
+        workScheduleRepository.getSchedulesByDate(doctorId, selectedDate)
+                .observe(getViewLifecycleOwner(), schedules -> {
+                    if (schedules != null) {
+                        existingSchedulesRef[0] = schedules;
+                    }
+                    latch.countDown();
+                });
+
+        // Process after both complete
+        java.util.concurrent.Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                latch.await(); // Wait for both operations to complete
+                
+                List<Appointment> appointments = appointmentsRef[0];
+                List<WorkSchedule> existingSchedules = existingSchedulesRef[0];
+
+                // Build set of appointment times for quick lookup
+                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                java.util.Set<String> appointmentTimes = new java.util.HashSet<>();
+                for (Appointment appointment : appointments) {
+                    appointmentTimes.add(timeFormat.format(appointment.startDate));
+                }
+
+                // Collect all slots to save:
+                // 1. Selected slots (user's choice)
+                // 2. Existing schedules that have appointments (must preserve)
+                java.util.Set<String> slotsToSave = new java.util.HashSet<>();
+                
+                // Add all selected slots
+                for (TimeSlot slot : selectedSlots) {
+                    slotsToSave.add(slot.getStartTime());
+                }
+                
+                // Add existing schedules that have appointments (preserve them)
+                for (WorkSchedule schedule : existingSchedules) {
+                    if (appointmentTimes.contains(schedule.startTime)) {
+                        slotsToSave.add(schedule.startTime);
+                    }
+                }
+
+                // Delete existing schedules for this date
+                workScheduleRepository.deleteSchedulesByDate(doctorId, selectedDate);
+
+                // Save all schedules (selected + preserved booked slots)
+                for (String startTime : slotsToSave) {
+                    // Find the corresponding TimeSlot to get endTime
+                    TimeSlot matchingSlot = null;
+                    for (TimeSlot slot : allSlots) {
+                        if (slot.getStartTime().equals(startTime)) {
+                            matchingSlot = slot;
+                            break;
+                        }
+                    }
+                    
+                    // If not found in current slots, try to get from existing schedules
+                    if (matchingSlot == null) {
+                        for (WorkSchedule schedule : existingSchedules) {
+                            if (schedule.startTime.equals(startTime)) {
+                                matchingSlot = new TimeSlot(schedule.startTime, schedule.endTime);
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // If still not found, calculate endTime from startTime + duration
+                    if (matchingSlot == null) {
+                        try {
+                            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+                            Calendar cal = Calendar.getInstance();
+                            cal.setTime(sdf.parse(startTime));
+                            cal.add(Calendar.MINUTE, SLOT_DURATION);
+                            String endTime = sdf.format(cal.getTime());
+                            matchingSlot = new TimeSlot(startTime, endTime);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            continue; // Skip this slot if we can't parse time
+                        }
+                    }
+                    
+                    if (matchingSlot != null) {
+                        WorkSchedule schedule = new WorkSchedule(
+                                doctorId,
+                                selectedDate,
+                                matchingSlot.getStartTime(),
+                                matchingSlot.getEndTime(),
+                                SLOT_DURATION
+                        );
+                        workScheduleRepository.createSchedule(schedule);
+                    }
+                }
+
+                // Wait a bit for all inserts to complete
+                Thread.sleep(200);
+
+                // Reload on UI thread
+                requireActivity().runOnUiThread(() -> {
+                    Toasty.success(requireContext(), 
+                            "Đã lưu " + selectedSlots.size() + " khung giờ làm việc", 
+                            Toast.LENGTH_SHORT).show();
+                    
+                    // Reload schedules to update UI after saving
+                    if (getView() != null) {
+                        getView().postDelayed(() -> {
+                            loadExistingSchedules();
+                            loadBookedAppointments(); // Reload appointments to refresh disabled state
+                        }, 300);
+                    }
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                requireActivity().runOnUiThread(() -> {
+                    Toasty.error(requireContext(), "Lỗi khi lưu lịch", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 
     private void clearSchedules() {
         workScheduleRepository.deleteSchedulesByDate(doctorId, selectedDate);
+        
+        // Reset UI immediately
         morningAdapter.setTimeSlots(generateTimeSlots("07:00", "11:00"));
         afternoonAdapter.setTimeSlots(generateTimeSlots("13:00", "17:00"));
+        
         Toasty.info(requireContext(), "Đã xóa lịch làm việc", Toast.LENGTH_SHORT).show();
+        
+        // Reload to ensure UI is in sync with database
+        if (getView() != null) {
+            getView().postDelayed(() -> {
+                loadExistingSchedules();
+            }, 300); // 300ms delay to ensure DB operation completes
+        }
     }
 
     private void loadExistingSchedules() {
@@ -282,6 +409,10 @@ public class DoctorCalendarSetupFragment extends Fragment {
 
         morningAdapter.setTimeSlots(morningSlots);
         afternoonAdapter.setTimeSlots(afternoonSlots);
+        
+        // After marking selected slots, reload appointments to mark disabled slots
+        // This ensures disabled state is preserved after reload
+        loadBookedAppointments();
     }
 
     private String formatDate(Calendar calendar) {
