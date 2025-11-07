@@ -26,10 +26,10 @@ public interface PatientDao {
     List<Patient> getAll();
 
     @Query("SELECT * FROM patients WHERE id = :id LIMIT 1")
-    Patient findById(int id);
+    Patient findById(long id);
 
     @Query("SELECT * FROM patients WHERE userId = :userId LIMIT 1")
-    Patient findByUserId(int userId);
+    Patient findByUserId(long userId);
 
     @Query("SELECT * FROM patients WHERE code = :code LIMIT 1")
     Patient findByCode(String code);
