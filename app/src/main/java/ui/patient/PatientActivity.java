@@ -15,11 +15,13 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
 import ui.auth.LoginActivity;
 import util.AuthUtils;
 
+@AndroidEntryPoint
 public class PatientActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;
@@ -54,10 +56,10 @@ public class PatientActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragmentContainer, new OverviewFragment())
+                    .replace(R.id.fragmentContainer, new DoctorListFragment())
                     .commit();
 
-            // 🔹 Đánh dấu menu “Tổng quan” là được chọn
+            // 🔹 Đánh dấu menu "Tổng quan" là được chọn
             navigationView.setCheckedItem(R.id.nav_overview);
             toolbar.setTitle("Tổng quan");
         }
@@ -70,8 +72,10 @@ public class PatientActivity extends AppCompatActivity {
                 if (id == R.id.nav_overview) {
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragmentContainer, new OverviewFragment())
-                            .commit();                }
+                            .replace(R.id.fragmentContainer, new DoctorListFragment())
+                            .commit();
+                    toolbar.setTitle("Tổng quan");
+                }
                 else if (id == R.id.nav_book_appointment) {
                     getSupportFragmentManager()
                             .beginTransaction()
