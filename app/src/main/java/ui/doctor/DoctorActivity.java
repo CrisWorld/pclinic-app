@@ -14,10 +14,12 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
 import ui.auth.LoginActivity;
 
+@AndroidEntryPoint
 public class DoctorActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;

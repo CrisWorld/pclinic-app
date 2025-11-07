@@ -16,6 +16,7 @@ import data.model.Review;
 import data.model.Service;
 import data.model.ServiceExaminationForm;
 import data.model.User;
+import data.model.WorkSchedule;
 
 @Database(entities = {
         User.class,
@@ -28,8 +29,9 @@ import data.model.User;
         PrescriptionExaminationForm.class,
         Review.class,
         Service.class,
-        ServiceExaminationForm.class
-}, version = 1)
+        ServiceExaminationForm.class,
+        WorkSchedule.class
+}, version = 3)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
@@ -38,4 +40,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract DoctorDao doctorDao();
     public abstract PrescriptionDao prescriptionDao();
     public abstract ServiceDao serviceDao();
+    public abstract AppointmentDao appointmentDao();
+    public abstract ReviewDao reviewDao();
+    public abstract WorkScheduleDao workScheduleDao();
 }
