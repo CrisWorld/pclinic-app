@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingVertical="8dp">
+
+    <TextView
+        android:id="@+id/tvPatientReviewDoctorName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Đánh giá cho: Dr. John Doe"
+        android:textColor="@color/textSecondary"
+        android:textStyle="italic" />
+
+    <RatingBar
+        android:id="@+id/rbPatientReviewRating"
+        style="?android:attr/ratingBarStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:numStars="5"
+        android:stepSize="1"
+        android:isIndicator="true" />
+
+    <TextView
+        android:id="@+id/tvPatientReviewDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Bác sĩ rất tận tình và chu đáo."
+        android:textColor="@color/textPrimary"
+        android:visibility="gone"/>
+
+</LinearLayout>

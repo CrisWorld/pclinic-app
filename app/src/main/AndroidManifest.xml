@@ -38,6 +38,8 @@
         <activity
             android:name="ui.admin.DoctorDetailActivity"
             android:exported="false" />
+        <activity android:name="ui.admin.AdminPatientDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

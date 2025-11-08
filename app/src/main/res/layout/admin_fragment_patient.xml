@@ -1,32 +1,28 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
-    android:background="@color/backgroundLight">
+    android:background="@color/backgroundLight"
+    android:padding="16dp">
 
-    <ImageView
-    android:layout_width="80dp"
-    android:layout_height="80dp"
-    android:contentDescription="Patient Icon" />
+    <!-- Thanh tìm kiếm -->
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tìm kiếm theo tên hoặc email bệnh nhân">
 
-    <TextView
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSearchPatient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Danh sách bệnh nhân -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerPatientList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="16dp"
-        android:text="Quản lý Bệnh nhân"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/black" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:text="Theo dõi danh sách bệnh nhân, lịch sử khám và thông tin liên lạc."
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        android:gravity="center" />
+        android:scrollbars="vertical" />
 </LinearLayout>
