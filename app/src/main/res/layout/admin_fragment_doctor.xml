@@ -1,32 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
-    android:background="@color/backgroundLight">
+    android:background="@color/backgroundLight"
+    android:padding="16dp"
+    tools:context="ui.admin.AdminActivity">
 
-    <ImageView
-    android:layout_width="80dp"
-    android:layout_height="80dp"
-    android:contentDescription="Doctor Icon" />
+    <!-- 🔍 Thanh tìm kiếm -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <TextView
+        <EditText
+            android:id="@+id/etSearchDoctor"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Tìm kiếm bác sĩ..."
+            android:background="@drawable/bg_edittext"
+            android:padding="10dp"
+            android:textColor="@color/textPrimary"
+            android:textColorHint="@color/textHint" />
+
+        <Button
+            android:id="@+id/btnCreateDoctor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tạo"
+            android:backgroundTint="@color/colorPrimary"
+            android:textColor="@color/white"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <!-- 📋 Danh sách bác sĩ -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerDoctorList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="16dp"
-        android:text="Quản lý Bác sĩ"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/black" />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:text="Tại đây bạn có thể xem, thêm, chỉnh sửa thông tin bác sĩ."
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        android:gravity="center" />
+        android:layout_marginTop="8dp"/>
 </LinearLayout>

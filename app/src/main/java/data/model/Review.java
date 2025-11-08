@@ -1,5 +1,6 @@
 package data.model;
 
+import static androidx.room.ForeignKey.CASCADE;
 import static androidx.room.ForeignKey.NO_ACTION;
 
 import androidx.annotation.Nullable;
@@ -14,19 +15,19 @@ import androidx.room.PrimaryKey;
                         entity = Patient.class,
                         parentColumns = "id",
                         childColumns = "patientId",
-                        onDelete = NO_ACTION
+                        onDelete = CASCADE
                 ),
                 @ForeignKey(
                         entity = Doctor.class,
                         parentColumns = "id",
                         childColumns = "doctorId",
-                        onDelete = NO_ACTION
+                        onDelete = CASCADE
                 ),
                 @ForeignKey(
                         entity = Appointment.class,
                         parentColumns = "id",
                         childColumns = "appointmentId",
-                        onDelete = NO_ACTION
+                        onDelete = CASCADE
                 )
         }
 )

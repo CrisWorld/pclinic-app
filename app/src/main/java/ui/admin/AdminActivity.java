@@ -13,10 +13,12 @@ import androidx.fragment.app.FragmentTransaction;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 
+import dagger.hilt.android.AndroidEntryPoint;
 import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
 import ui.auth.LoginActivity;
 
+@AndroidEntryPoint
 public class AdminActivity extends AppCompatActivity {
 
     private DrawerLayout drawerLayout;

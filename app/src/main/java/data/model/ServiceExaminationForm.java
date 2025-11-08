@@ -1,5 +1,6 @@
 package data.model;
 
+import static androidx.room.ForeignKey.CASCADE;
 import static androidx.room.ForeignKey.NO_ACTION;
 
 import androidx.room.Entity;
@@ -13,25 +14,25 @@ import androidx.room.PrimaryKey;
                         entity = Doctor.class,
                         parentColumns = "id",
                         childColumns = "doctorId",
-                        onDelete = NO_ACTION
+                        onDelete = CASCADE
                 ),
                 @ForeignKey(
                         entity = Patient.class,
                         parentColumns = "id",
                         childColumns = "patientId",
-                        onDelete = NO_ACTION
+                        onDelete = CASCADE
                 ),
                 @ForeignKey(
                         entity = Appointment.class,
                         parentColumns = "id",
                         childColumns = "appointmentId",
-                        onDelete = NO_ACTION
+                        onDelete = CASCADE
                 ),
                 @ForeignKey(
                         entity = ExaminationForm.class,
                         parentColumns = "id",
                         childColumns = "examinationId",
-                        onDelete = NO_ACTION
+                        onDelete = CASCADE
                 ),
                 @ForeignKey(
                         entity = Prescription.class,

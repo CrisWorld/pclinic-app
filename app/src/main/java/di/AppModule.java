@@ -31,6 +31,7 @@ import data.db.ReviewDao;
 import data.db.ServiceDao;
 import data.db.UserDao;
 import data.db.WorkScheduleDao;
+import data.db.admin.AdminDoctorDao;
 import data.enums.Enum;
 import data.model.Admin;
 import data.model.Appointment;
@@ -114,6 +115,12 @@ public class AppModule {
     @Singleton
     public WorkScheduleDao provideWorkScheduleDao(AppDatabase db) {
         return db.workScheduleDao();
+    }
+
+    @Provides
+    @Singleton
+    public AdminDoctorDao provideAdminDoctorDao(AppDatabase db) {
+        return db.adminDoctorDao();
     }
 
 

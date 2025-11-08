@@ -35,6 +35,9 @@
         <activity android:name="ui.admin.AdminActivity"
             android:exported="true">
         </activity>
+        <activity
+            android:name="ui.admin.DoctorDetailActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
