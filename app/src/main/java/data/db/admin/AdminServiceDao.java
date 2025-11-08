@@ -29,4 +29,7 @@ public interface AdminServiceDao {
 
     @Query("SELECT * FROM services WHERE name LIKE '%' || :keyword || '%' OR code LIKE '%' || :keyword || '%' ORDER BY name ASC")
     LiveData<List<Service>> search(String keyword);
+
+    @Query("SELECT * FROM services WHERE code = :code LIMIT 1")
+    Service findByCode(String code);
 }

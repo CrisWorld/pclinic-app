@@ -39,4 +39,7 @@ public interface AdminPrescriptionDao {
 
     @Query("SELECT COUNT(*) FROM prescriptions")
     int count();
+
+    @Query("SELECT * FROM prescriptions WHERE code = :code LIMIT 1")
+    Prescription findByCode(String code);
 }

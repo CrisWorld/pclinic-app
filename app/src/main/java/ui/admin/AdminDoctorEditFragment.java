@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,6 +24,8 @@ import data.db.admin.AdminDoctorDao;
 import data.dto.DoctorInfo;
 import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
+import android.widget.RadioGroup; // Thêm import này
+import android.widget.RadioButton;
 
 @AndroidEntryPoint
 public class AdminDoctorEditFragment extends Fragment {
@@ -31,6 +35,8 @@ public class AdminDoctorEditFragment extends Fragment {
     private TextInputEditText etFullName, etEmail, etPhone, etSpecialties, etBio;
     private Button btnUpdate;
     private ImageButton btnBack;
+    private RadioGroup rgGender; // Thêm biến
+    private RadioButton rbMale, rbFemale;
 
     @Inject
     public AdminDoctorDao adminDoctorDao;
@@ -69,7 +75,9 @@ public class AdminDoctorEditFragment extends Fragment {
         etBio = view.findViewById(R.id.etBio);
         btnUpdate = view.findViewById(R.id.btnUpdate);
         btnBack = view.findViewById(R.id.btnBack);
-
+        rgGender = view.findViewById(R.id.rgGender);
+        rbMale = view.findViewById(R.id.rbMale);
+        rbFemale = view.findViewById(R.id.rbFemale);
         // Cập nhật tiêu đề
         TextView tvTitle = view.findViewById(R.id.tvTitle);
         tvTitle.setText("Chỉnh Sửa Bác Sĩ");
@@ -92,6 +100,15 @@ public class AdminDoctorEditFragment extends Fragment {
         etEmail.setText(doctor.email);
         etPhone.setText(doctor.phone);
         etBio.setText(doctor.bio);
+
+        if (doctor.gender != null) {
+            if (doctor.gender.equalsIgnoreCase("male")) {
+                rbMale.setChecked(true);
+            } else if (doctor.gender.equalsIgnoreCase("female")) {
+                rbFemale.setChecked(true);
+            }
+        }
+
         if (doctor.specialties != null && !doctor.specialties.isEmpty()) {
             etSpecialties.setText(TextUtils.join(", ", doctor.specialties));
         }
@@ -110,13 +127,23 @@ public class AdminDoctorEditFragment extends Fragment {
         String specialtiesInput = etSpecialties.getText().toString().trim();
         List<String> specialtiesList = Arrays.asList(specialtiesInput.split("\\s*,\\s*"));
 
+        String gender;
+        int selectedGenderId = rgGender.getCheckedRadioButtonId();
+        if (selectedGenderId == R.id.rbMale) {
+            gender = "male";
+        } else if (selectedGenderId == R.id.rbFemale) {
+            gender = "female";
+        } else {
+            gender = "male";
+        }
+
         if (TextUtils.isEmpty(fullName) || TextUtils.isEmpty(email)) {
             Toasty.warning(requireContext(), "Tên và Email không được để trống.").show();
             return;
         }
 
         dbExecutor.execute(() -> {
-            adminDoctorDao.updateUser(currentDoctor.userId, fullName, email, phone);
+            adminDoctorDao.updateUser(currentDoctor.userId, fullName, email, phone, gender);
             adminDoctorDao.updateDoctor(currentDoctor.doctorId, specialtiesList, bio);
 
             requireActivity().runOnUiThread(() -> {

@@ -118,18 +118,19 @@ public class AdminServiceFragment extends Fragment {
     }
 
     private void openUpsertFragment(Service service) {
-        // Tương tự, bạn sẽ tạo AdminServiceUpsertFragment và layout của nó
-        // Fragment upsertFragment;
-        // if (service == null) {
-        //     upsertFragment = AdminServiceUpsertFragment.newInstance();
-        // } else {
-        //     upsertFragment = AdminServiceUpsertFragment.newInstance(service.id);
-        // }
-        //
-        // FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
-        // transaction.replace(R.id.fragmentContainer, upsertFragment);
-        // transaction.addToBackStack(null);
-        // transaction.commit();
-        Toasty.info(getContext(), "Mở màn hình Tạo/Sửa Dịch vụ").show();
+        Fragment upsertFragment;
+        if (service == null) {
+            // Chế độ TẠO
+            upsertFragment = AdminServiceUpsertFragment.newInstance();
+        } else {
+            // Chế độ SỬA
+            upsertFragment = AdminServiceUpsertFragment.newInstance(service.id);
+        }
+
+        FragmentTransaction transaction = getParentFragmentManager().beginTransaction();
+        // Thay R.id.fragmentContainer bằng ID thật của container trong Activity của bạn
+        transaction.replace(R.id.fragmentContainer, upsertFragment);
+        transaction.addToBackStack(null);
+        transaction.commit();
     }
 }

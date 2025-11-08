@@ -34,8 +34,8 @@ public interface AdminDoctorDao {
     void deleteUserById(long userId); // <-- Phương thức mới để xóa User
 
     // Thêm các phương thức cập nhật
-    @Query("UPDATE users SET fullName = :fullName, email = :email, phone = :phone WHERE id = :userId")
-    void updateUser(long userId, String fullName, String email, String phone);
+    @Query("UPDATE users SET fullName = :fullName, email = :email, phone = :phone, gender = :gender WHERE id = :userId")
+    void updateUser(long userId, String fullName, String email, String phone, String gender);
 
     @Query("UPDATE doctors SET specialties = :specialties, bio = :bio WHERE id = :doctorId")
     void updateDoctor(long doctorId, List<String> specialties, String bio);

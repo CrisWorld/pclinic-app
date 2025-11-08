@@ -21,16 +21,15 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
-import data.db.PrescriptionDao;
-import data.db.admin.AdminPrescriptionDao;
-import data.model.Prescription;
+import data.db.admin.AdminServiceDao;
+import data.model.Service;
 import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
 
 @AndroidEntryPoint
-public class AdminPrescriptionUpsertFragment extends Fragment {
+public class AdminServiceUpsertFragment extends Fragment {
 
-    private static final String ARG_PRESCRIPTION_ID = "prescription_id";
+    private static final String ARG_SERVICE_ID = "service_id";
 
     private TextInputEditText etName, etCode, etPrice;
     private TextView tvTitle;
@@ -38,22 +37,22 @@ public class AdminPrescriptionUpsertFragment extends Fragment {
     private ImageButton btnBack;
 
     @Inject
-    public AdminPrescriptionDao prescriptionDao;
+    public AdminServiceDao serviceDao;
     private final ExecutorService dbExecutor = Executors.newSingleThreadExecutor();
 
-    private Prescription currentPrescription;
+    private Service currentService;
     private boolean isEditMode = false;
 
     // Factory method cho chế độ TẠO
-    public static AdminPrescriptionUpsertFragment newInstance() {
-        return new AdminPrescriptionUpsertFragment();
+    public static AdminServiceUpsertFragment newInstance() {
+        return new AdminServiceUpsertFragment();
     }
 
     // Factory method cho chế độ SỬA
-    public static AdminPrescriptionUpsertFragment newInstance(long prescriptionId) {
-        AdminPrescriptionUpsertFragment fragment = new AdminPrescriptionUpsertFragment();
+    public static AdminServiceUpsertFragment newInstance(long serviceId) {
+        AdminServiceUpsertFragment fragment = new AdminServiceUpsertFragment();
         Bundle args = new Bundle();
-        args.putLong(ARG_PRESCRIPTION_ID, prescriptionId);
+        args.putLong(ARG_SERVICE_ID, serviceId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -61,7 +60,7 @@ public class AdminPrescriptionUpsertFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null && getArguments().containsKey(ARG_PRESCRIPTION_ID)) {
+        if (getArguments() != null && getArguments().containsKey(ARG_SERVICE_ID)) {
             isEditMode = true;
         }
     }
@@ -69,7 +68,7 @@ public class AdminPrescriptionUpsertFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.admin_fragment_prescription_upsert, container, false);
+        View view = inflater.inflate(R.layout.admin_fragment_service_upsert, container, false);
         initViews(view);
         setupUI();
         return view;
@@ -86,39 +85,35 @@ public class AdminPrescriptionUpsertFragment extends Fragment {
 
     private void setupUI() {
         btnBack.setOnClickListener(v -> getParentFragmentManager().popBackStack());
-        btnSave.setOnClickListener(v -> savePrescription());
+        btnSave.setOnClickListener(v -> saveService());
 
         if (isEditMode) {
-            tvTitle.setText("Chỉnh Sửa Thuốc");
+            tvTitle.setText("Chỉnh Sửa Dịch Vụ");
             btnSave.setText("Cập nhật");
             loadExistingData();
         } else {
-            tvTitle.setText("Thêm Thuốc Mới");
+            tvTitle.setText("Thêm Dịch Vụ Mới");
             btnSave.setText("Lưu");
         }
     }
 
     private void loadExistingData() {
-        long prescriptionId = getArguments().getLong(ARG_PRESCRIPTION_ID);
+        long serviceId = getArguments().getLong(ARG_SERVICE_ID);
         dbExecutor.execute(() -> {
-            currentPrescription = prescriptionDao.findById(prescriptionId);
-            if (currentPrescription != null) {
+            currentService = serviceDao.findById(serviceId);
+            if (currentService != null) {
                 requireActivity().runOnUiThread(this::populateForm);
             }
         });
     }
 
     private void populateForm() {
-        etName.setText(currentPrescription.name);
-        etCode.setText(currentPrescription.code);
-        etPrice.setText(String.valueOf(currentPrescription.price));
+        etName.setText(currentService.name);
+        etCode.setText(currentService.code);
+        etPrice.setText(String.valueOf(currentService.price));
     }
 
-    // Trong file: ui/admin/AdminPrescriptionUpsertFragment.java
-
-// ...
-
-    private void savePrescription() {
+    private void saveService() {
         String name = etName.getText().toString().trim();
         String code = etCode.getText().toString().trim().toUpperCase(); // Chuẩn hóa về chữ hoa
         String priceStr = etPrice.getText().toString().trim();
@@ -138,39 +133,39 @@ public class AdminPrescriptionUpsertFragment extends Fragment {
 
         dbExecutor.execute(() -> {
             // KIỂM TRA MÃ DUY NHẤT
-            Prescription prescriptionWithSameCode = prescriptionDao.findByCode(code);
-            boolean isCodeExisted = prescriptionWithSameCode != null;
+            Service serviceWithSameCode = serviceDao.findByCode(code);
+            boolean isCodeExisted = serviceWithSameCode != null;
 
-            // Nếu đang ở chế độ sửa, mã chỉ được coi là đã tồn tại nếu nó thuộc về một thuốc KHÁC
-            if (isEditMode && isCodeExisted && prescriptionWithSameCode.id == currentPrescription.id) {
+            // Nếu đang ở chế độ sửa, mã chỉ được coi là đã tồn tại nếu nó thuộc về một dịch vụ KHÁC
+            if (isEditMode && isCodeExisted && serviceWithSameCode.id == currentService.id) {
                 isCodeExisted = false;
             }
 
             if (isCodeExisted) {
                 requireActivity().runOnUiThread(() ->
-                        Toasty.error(requireContext(), "Mã thuốc '" + code + "' đã tồn tại.").show()
+                        Toasty.error(requireContext(), "Mã dịch vụ '" + code + "' đã tồn tại.").show()
                 );
                 return; // Dừng việc lưu
             }
 
             // TIẾP TỤC LƯU NẾU MÃ HỢP LỆ
             if (isEditMode) {
-                currentPrescription.name = name;
-                currentPrescription.code = code;
-                currentPrescription.price = price;
-                prescriptionDao.update(currentPrescription);
+                currentService.name = name;
+                currentService.code = code;
+                currentService.price = price;
+                serviceDao.update(currentService);
                 requireActivity().runOnUiThread(() -> {
-                    Toasty.success(requireContext(), "Cập nhật thuốc thành công!").show();
+                    Toasty.success(requireContext(), "Cập nhật dịch vụ thành công!").show();
                     getParentFragmentManager().popBackStack();
                 });
             } else {
-                Prescription newPrescription = new Prescription();
-                newPrescription.name = name;
-                newPrescription.code = code;
-                newPrescription.price = price;
-                prescriptionDao.insert(newPrescription);
+                Service newService = new Service();
+                newService.name = name;
+                newService.code = code;
+                newService.price = price;
+                serviceDao.insert(newService);
                 requireActivity().runOnUiThread(() -> {
-                    Toasty.success(requireContext(), "Thêm thuốc mới thành công!").show();
+                    Toasty.success(requireContext(), "Thêm dịch vụ mới thành công!").show();
                     getParentFragmentManager().popBackStack();
                 });
             }
