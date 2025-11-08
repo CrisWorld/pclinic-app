@@ -3,30 +3,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp"
-    android:background="@color/backgroundLight">
+    android:background="@color/backgroundLight"
+    android:padding="16dp">
 
-    <ImageView
-    android:layout_width="80dp"
-    android:layout_height="80dp"
-    android:contentDescription="Service Icon" />
-
-    <TextView
+    <!-- Thanh tìm kiếm -->
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Tìm kiếm theo tên hoặc mã dịch vụ">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/etSearchService"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <!-- Nút tạo mới -->
+    <Button
+        android:id="@+id/btnCreateService"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Quản lý Dịch vụ"
-        android:textSize="20sp"
-        android:textStyle="bold"
-        android:textColor="@color/black" />
+        android:layout_marginBottom="8dp"
+        android:text="Thêm Dịch Vụ Mới"
+        android:textColor="@color/white"
+        android:backgroundTint="@color/colorPrimary"/>
 
-    <TextView
+    <!-- Danh sách dịch vụ -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerServiceList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:text="Thêm mới, chỉnh sửa hoặc ẩn các dịch vụ khám chữa bệnh."
-        android:textSize="14sp"
-        android:textColor="@color/black"
-        android:gravity="center" />
+        android:scrollbars="vertical" />
 </LinearLayout>

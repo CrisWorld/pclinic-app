@@ -6,6 +6,8 @@ import androidx.room.TypeConverters;
 
 import data.converters.Converters;
 import data.db.admin.AdminDoctorDao;
+import data.db.admin.AdminPrescriptionDao;
+import data.db.admin.AdminServiceDao;
 import data.model.Admin;
 import data.model.Appointment;
 import data.model.Doctor;
@@ -45,4 +47,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ReviewDao reviewDao();
     public abstract WorkScheduleDao workScheduleDao();
     public abstract AdminDoctorDao adminDoctorDao();
+    public abstract AdminPrescriptionDao adminPrescriptionDao();
+    public abstract AdminServiceDao adminServiceDao();
 }

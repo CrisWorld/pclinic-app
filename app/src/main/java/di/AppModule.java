@@ -32,6 +32,8 @@ import data.db.ServiceDao;
 import data.db.UserDao;
 import data.db.WorkScheduleDao;
 import data.db.admin.AdminDoctorDao;
+import data.db.admin.AdminPrescriptionDao;
+import data.db.admin.AdminServiceDao;
 import data.enums.Enum;
 import data.model.Admin;
 import data.model.Appointment;
@@ -123,6 +125,17 @@ public class AppModule {
         return db.adminDoctorDao();
     }
 
+    @Provides
+    @Singleton
+    public AdminPrescriptionDao provideAdminPrescriptionDao(AppDatabase db) {
+        return db.adminPrescriptionDao();
+    }
+
+    @Provides
+    @Singleton
+    public AdminServiceDao provideAdminServiceDao(AppDatabase db) {
+        return db.adminServiceDao();
+    }
 
     // custom
     public void seedDatabase(AppDatabase db) {
