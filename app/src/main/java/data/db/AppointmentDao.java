@@ -62,5 +62,12 @@ public interface AppointmentDao {
             "WHERE a.id = :appointmentId LIMIT 1")
     AppointmentWithDoctor getDetail(long appointmentId);
 
+    @Query("SELECT a.*, u.fullName AS fullName " +
+            "FROM appointments a " +
+            "JOIN doctors d ON a.doctorId = d.id " +
+            "JOIN users u ON d.userId = u.id " +
+            "WHERE a.patientId = :patientId AND a.startDate < :today " +
+            "ORDER BY a.startDate DESC")
+    List<AppointmentWithDoctor> findHistoryByPatient(long patientId, Date today);
 
 }
