@@ -1,100 +1,209 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:background="@color/backgroundLight"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/backgroundLight">
 
-    <!-- Header -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical"
+        android:background="@color/white"
+        android:elevation="4dp"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/txtTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Lượt khám hôm nay"
-                android:textColor="@color/colorPrimary"
-                android:textSize="20sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:id="@+id/txtDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ngày 22/09/2024"
-                android:textSize="14sp"
-                android:textColor="@color/textSecondary"
-                android:layout_marginTop="4dp"/>
-        </LinearLayout>
-
-        <!-- Filter Chips -->
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupFilter"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="Lịch khám hôm nay"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/textPrimary"/>
+
+        <TextView
+            android:id="@+id/tv_current_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:textSize="14sp"
+            android:textColor="@color/textSecondary"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:singleSelection="false"
+            android:layout_marginTop="16dp"
+            android:weightSum="3">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="8dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_stat_card">
+
+                <TextView
+                    android:id="@+id/tv_total_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/colorPrimary"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tổng số"
+                    android:textSize="12sp"
+                    android:textColor="@color/textSecondary"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:background="@drawable/bg_stat_card">
+
+                <TextView
+                    android:id="@+id/tv_confirmed_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/success"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đã xác nhận"
+                    android:textSize="12sp"
+                    android:textColor="@color/textSecondary"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:padding="8dp"
+                android:layout_marginStart="4dp"
+                android:background="@drawable/bg_stat_card">
+
+                <TextView
+                    android:id="@+id/tv_done_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/info"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hoàn thành"
+                    android:textSize="12sp"
+                    android:textColor="@color/textSecondary"/>
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:paddingVertical="8dp"
+        android:paddingHorizontal="16dp">
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_filter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:singleSelection="true"
             app:selectionRequired="false">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chipWaiting"
+                android:id="@+id/chip_all"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Đang chờ"
-                android:checkable="true"
-                android:checked="true"
-                style="@style/Widget.MaterialComponents.Chip.Choice"/>
+                android:text="Tất cả"
+                android:checked="true"/>
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chipCompleted"
+                android:id="@+id/chip_pending"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Khám xong"
-                android:checkable="true"
-                android:checked="true"
-                style="@style/Widget.MaterialComponents.Chip.Choice"/>
+                android:text="Chờ xác nhận"/>
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chipAbsent"
+                android:id="@+id/chip_confirmed"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Vắng mặt"
-                android:checkable="true"
-                android:checked="true"
-                style="@style/Widget.MaterialComponents.Chip.Choice"/>
+                android:text="Đã xác nhận"/>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/chip_done"
+                style="@style/Widget.MaterialComponents.Chip.Choice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hoàn thành"/>
         </com.google.android.material.chip.ChipGroup>
-    </LinearLayout>
+    </HorizontalScrollView>
 
-    <!-- Single List -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvAppointments"
+        android:id="@+id/rv_appointments"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp"/>
+        android:padding="8dp"
+        android:clipToPadding="false"/>
 
-    <TextView
-        android:id="@+id/txtEmpty"
+    <LinearLayout
+        android:id="@+id/layout_empty"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Không có lịch hẹn nào cho hôm nay"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
         android:gravity="center"
-        android:textSize="14sp"
-        android:textColor="@color/textSecondary"
-        android:padding="16dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="72sp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Không có lịch khám hôm nay"
+            android:textSize="16sp"
+            android:textColor="@color/textSecondary"
+            android:layout_marginTop="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hãy nghỉ ngơi và tái tạo năng lượng!"
+            android:textSize="14sp"
+            android:textColor="@color/textHint"
+            android:layout_marginTop="4dp"/>
+    </LinearLayout>
 </LinearLayout>
