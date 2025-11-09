@@ -8,6 +8,9 @@ import data.converters.Converters;
 import data.db.admin.AdminDoctorDao;
 import data.db.admin.AdminPrescriptionDao;
 import data.db.admin.AdminServiceDao;
+import data.db.ExaminationFormDao;
+import data.db.PrescriptionExaminationFormDao;
+import data.db.ServiceExaminationFormDao;
 import data.model.Admin;
 import data.model.Appointment;
 import data.model.Doctor;
@@ -34,7 +37,7 @@ import data.model.WorkSchedule;
         Service.class,
         ServiceExaminationForm.class,
         WorkSchedule.class
-}, version = 4)
+}, version = 3)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
@@ -49,4 +52,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract AdminDoctorDao adminDoctorDao();
     public abstract AdminPrescriptionDao adminPrescriptionDao();
     public abstract AdminServiceDao adminServiceDao();
+    public abstract ExaminationFormDao examinationFormDao();
+    public abstract ServiceExaminationFormDao serviceExaminationFormDao();
+    public abstract PrescriptionExaminationFormDao prescriptionExaminationFormDao();
 }
