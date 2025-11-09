@@ -5,7 +5,11 @@ import androidx.room.Dao;import androidx.room.Query;
 
 import java.util.List;
 
+import data.dto.AdminDashBoardStats;
+import data.dto.DailyAppointmentStats;
+import data.dto.DailyRevenueStats;
 import data.dto.DoctorInfo;
+import data.dto.DoctorRatingInfo;
 import data.dto.MonthlyAppointmentStats;
 import data.dto.MonthlyRevenueStats;
 import data.dto.PatientDetailInfo;
@@ -95,4 +99,48 @@ public interface AdminDoctorDao {
     @Query("SELECT p.id AS patientId, p.code as patientCode, u.id AS userId, u.fullName, u.email, u.phone, u.gender " +
             "FROM patients p INNER JOIN users u ON p.userId = u.id WHERE u.fullName LIKE '%' || :keyword || '%' OR u.email LIKE '%' || :keyword || '%'")
     LiveData<List<PatientInfo>> searchPatientInfo(String keyword);
+
+    @Query("SELECT " +
+            "(SELECT COUNT(*) FROM patients) as totalPatients, " +
+            "(SELECT COUNT(*) FROM doctors) as totalDoctors, " +
+            "(SELECT SUM(grandTotal) FROM examinationForms) as totalRevenue")
+    LiveData<AdminDashBoardStats> getDashboardStats();
+
+    // 2. Lấy top 5 bác sĩ có rating cao nhất
+    @Query("SELECT u.fullName as doctorName, AVG(r.rating) as averageRating " +
+            "FROM reviews r " +
+            "INNER JOIN doctors d ON r.doctorId = d.id " +
+            "INNER JOIN users u ON d.userId = u.id " +
+            "GROUP BY r.doctorId " +
+            "ORDER BY averageRating DESC, COUNT(r.id) DESC " + // Ưu tiên rating cao, sau đó là số lượng review nhiều
+            "LIMIT 5")
+    LiveData<List<DoctorRatingInfo>> getTopRatedDoctors();
+
+    // 3. Thống kê LỊCH HẸN theo ngày trong một tháng/năm cụ thể (ví dụ: '2025-11')
+    @Query("SELECT strftime('%d', startDate) as day, COUNT(id) as appointmentCount " +
+            "FROM appointments " +
+            "WHERE strftime('%Y-%m', startDate) = :yearMonth " + // :yearMonth có dạng 'YYYY-MM'
+            "GROUP BY day ORDER BY day ASC")
+    LiveData<List<DailyAppointmentStats>> getDailyAppointmentStatsForMonth(String yearMonth);
+
+    // 4. Thống kê LỊCH HẸN theo tháng trong một năm cụ thể
+    @Query("SELECT strftime('%m', startDate) as month, COUNT(id) as appointmentCount " +
+            "FROM appointments " +
+            "WHERE strftime('%Y', startDate) = :year " +
+            "GROUP BY month ORDER BY month ASC")
+    LiveData<List<MonthlyAppointmentStats>> getMonthlyAppointmentStatsForYear(String year);
+
+    // 5. Thống kê DOANH THU theo tháng trong một năm cụ thể
+    @Query("SELECT strftime('%m', examinationDate) as month, SUM(grandTotal) as totalRevenue " +
+            "FROM examinationForms " +
+            "WHERE strftime('%Y', examinationDate) = :year " +
+            "GROUP BY month ORDER BY month ASC")
+    LiveData<List<MonthlyRevenueStats>> getMonthlyRevenueStatsForYear(String year);
+
+    // 6. Thống kê DOANH THU theo ngày trong một tháng/năm cụ thể
+    @Query("SELECT strftime('%d', examinationDate) as day, SUM(grandTotal) as totalRevenue " +
+            "FROM examinationForms " +
+            "WHERE strftime('%Y-%m', examinationDate) = :yearMonth " +
+            "GROUP BY day ORDER BY day ASC")
+    LiveData<List<DailyRevenueStats>> getDailyRevenueStatsForMonth(String yearMonth);
 }
