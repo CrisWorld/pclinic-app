@@ -9,6 +9,7 @@ import androidx.room.Update;
 import java.util.Date;
 import java.util.List;
 
+import data.dto.AppointmentWithDoctor;
 import data.enums.Enum;
 import data.model.Appointment;
 
@@ -45,4 +46,14 @@ public interface AppointmentDao {
 
     @Query("SELECT * FROM appointments WHERE patientId = :patientId ORDER BY startDate DESC")
     List<Appointment> findByPatient(long patientId);
+
+    @Query("SELECT a.*, u.fullName AS fullName " +
+            "FROM appointments a " +
+            "JOIN doctors d ON a.doctorId = d.id " +
+            "JOIN users u ON d.userId = u.id " +
+            "WHERE a.patientId = :patientId AND a.startDate >= :fromDate " +
+            "ORDER BY a.startDate ASC")
+    List<AppointmentWithDoctor> findUpcomingByPatient(long patientId, Date fromDate);
+
+
 }

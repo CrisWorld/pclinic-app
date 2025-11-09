@@ -6,8 +6,8 @@
             android:id="@+id/nav_overview"
             android:title="Tổng quan" />
         <item
-            android:id="@+id/nav_book_appointment"
-            android:title="Đặt lịch hẹn" />
+            android:id="@+id/nav_upcoming_appointments"
+            android:title="Lịch hẹn sắp tới" />
         <item
             android:id="@+id/nav_history"
             android:title="Lịch sử" />
