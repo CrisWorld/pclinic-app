@@ -11,6 +11,7 @@ import data.model.ExaminationForm;
 
 @Dao
 public interface ExaminationFormDao {
+
     @Insert
     long insert(ExaminationForm examinationForm);
 
@@ -29,4 +30,3 @@ public interface ExaminationFormDao {
     @Query("SELECT * FROM examinationForms WHERE doctorId = :doctorId ORDER BY examinationDate DESC")
     List<ExaminationForm> findByDoctorId(long doctorId);
 }
-

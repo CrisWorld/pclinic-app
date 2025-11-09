@@ -76,4 +76,12 @@ public interface AppointmentDao {
             "ORDER BY a.startDate ASC")
     List<AppointmentWithPatient> findByDoctorAndDateWithPatient(long doctorId, String date);
 
+    @Query("SELECT a.*, u.fullName AS fullName " +
+            "FROM appointments a " +
+            "JOIN doctors d ON a.doctorId = d.id " +
+            "JOIN users u ON d.userId = u.id " +
+            "WHERE a.patientId = :patientId AND a.startDate < :today " +
+            "ORDER BY a.startDate DESC")
+    List<AppointmentWithDoctor> findHistoryByPatient(long patientId, Date today);
+
 }

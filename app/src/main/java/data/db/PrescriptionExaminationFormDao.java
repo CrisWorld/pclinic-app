@@ -6,6 +6,7 @@ import androidx.room.Query;
 
 import java.util.List;
 
+import androidx.room.Dao;import androidx.room.Insert;
 import data.model.PrescriptionExaminationForm;
 
 @Dao
@@ -25,4 +26,3 @@ public interface PrescriptionExaminationFormDao {
     @Query("DELETE FROM prescription_examinationForms WHERE examinationId = :examinationId")
     void deleteByExaminationId(long examinationId);
 }
-

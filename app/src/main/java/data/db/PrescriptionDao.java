@@ -8,6 +8,7 @@ import androidx.room.Delete;
 
 import java.util.List;
 
+import data.dto.PrescriptionDetailDto;
 import data.model.Prescription;
 
 @Dao
@@ -33,4 +34,16 @@ public interface PrescriptionDao {
 
     @Query("SELECT COUNT(*) FROM prescriptions")
     int count();
+
+    @Query("SELECT " +
+            "p.name AS prescriptionName, " +
+            "p.code AS prescriptionCode, " +
+            "pef.price AS price " +
+            "FROM prescription_examinationForms pef " +
+            "JOIN prescriptions p ON pef.prescriptionId = p.id " +
+            "WHERE pef.examinationId = :examinationId")
+    List<PrescriptionDetailDto> findByExaminationId(long examinationId);
+
+    @Query("SELECT SUM(price) FROM prescription_examinationForms WHERE examinationId = :examinationId")
+    double sumPriceByExaminationId(long examinationId);
 }

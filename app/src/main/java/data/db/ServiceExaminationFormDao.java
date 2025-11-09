@@ -25,4 +25,3 @@ public interface ServiceExaminationFormDao {
     @Query("DELETE FROM serviceExaminationForms WHERE examinationId = :examinationId")
     void deleteByExaminationId(long examinationId);
 }
-

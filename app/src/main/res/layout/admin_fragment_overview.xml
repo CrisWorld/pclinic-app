@@ -1,15 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:background="@color/backgroundLight">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Trang Tổng quan"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/black" />
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tổng Quan"
+            android:textColor="@color/textPrimary"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- CardView Thống kê tổng quan -->
+        <androidx.cardview.widget.CardView style="@style/DashboardCard">
+            <LinearLayout style="@style/DashboardCardContent">
+                <TextView style="@style/DashboardCardTitle" android:text="Chỉ Số Hệ Thống"/>
+                <TextView android:id="@+id/tvTotalPatients" style="@style/DashboardStatItem" tools:text="Tổng số bệnh nhân: 1,234"/>
+                <TextView android:id="@+id/tvTotalDoctors" style="@style/DashboardStatItem" tools:text="Tổng số bác sĩ: 56"/>
+                <TextView android:id="@+id/tvTotalRevenue" style="@style/DashboardStatItem" tools:text="Tổng doanh thu: 1,234,567,890 đ"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- CardView Top bác sĩ -->
+        <androidx.cardview.widget.CardView style="@style/DashboardCard">
+            <LinearLayout style="@style/DashboardCardContent">
+                <TextView style="@style/DashboardCardTitle" android:text="Bác Sĩ Nổi Bật"/>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerTopDoctors"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- CardView Biểu đồ Doanh thu -->
+        <androidx.cardview.widget.CardView style="@style/DashboardCard">
+            <LinearLayout style="@style/DashboardCardContent">
+                <TextView style="@style/DashboardCardTitle" android:text="Thống Kê Doanh Thu"/>
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupRevenue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true">
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" style="@style/Widget.MaterialComponents.Chip.Filter" android:id="@+id/chipRevenueThisMonth" android:text="Tháng Này"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.Chip.Filter" android:id="@+id/chipRevenueThisYear" android:text="Năm Nay" android:checked="true"/>
+                </com.google.android.material.chip.ChipGroup>
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/chartRevenue"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- CardView Biểu đồ Lịch hẹn -->
+        <androidx.cardview.widget.CardView style="@style/DashboardCard">
+            <LinearLayout style="@style/DashboardCardContent">
+                <TextView style="@style/DashboardCardTitle" android:text="Thống Kê Lịch Hẹn"/>
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupAppointment"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:singleSelection="true">
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.Chip.Filter" android:id="@+id/chipAppointmentThisMonth" android:text="Tháng Này"/>
+                    <com.google.android.material.chip.Chip
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        style="@style/Widget.MaterialComponents.Chip.Filter" android:id="@+id/chipAppointmentThisYear" android:text="Năm Nay" android.checked="true"/>
+                </com.google.android.material.chip.ChipGroup>
+                <com.github.mikephil.charting.charts.BarChart
+                    android:id="@+id/chartAppointment"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:layout_marginTop="8dp"/>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

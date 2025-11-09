@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:padding="16dp"
+    android:background="@color/backgroundLight">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chi tiết lịch sử hẹn"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- Layout chứa thông tin chi tiết -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight">
+            <TextView android:id="@+id/tvDoctor" android:padding="16dp" android:textSize="16sp" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/textPrimary" android:text="👨‍⚕️ Bác sĩ: "/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight">
+            <TextView android:id="@+id/tvDate" android:padding="16dp" android:textSize="16sp" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/textSecondary" android:text="📅 Bắt đầu: "/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight">
+            <TextView android:id="@+id/tvEndDate" android:padding="16dp" android:textSize="16sp" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/textSecondary" android:text="⏱ Kết thúc: "/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight">
+            <TextView android:id="@+id/tvStatus" android:padding="16dp" android:textSize="16sp" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/colorAccent" android:text="✅ Trạng thái: "/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight">
+            <TextView android:id="@+id/tvCheckIn" android:padding="16dp" android:textSize="16sp" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/textSecondary" android:text="⏳ Check-in: "/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight">
+            <TextView android:id="@+id/tvDescription" android:padding="16dp" android:textSize="16sp" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/textSecondary" android:text="📝 Ghi chú: "/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight">
+
+            <TextView
+                android:id="@+id/tvTotalCost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="💰 Tổng chi phí: 0đ"
+                android:textColor="@color/success"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Các nút chức năng -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="12dp"> <!-- Giảm margin top ở đây -->
+
+            <Button
+                android:id="@+id/btnViewPrescription"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Xem đơn thuốc"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_marginBottom="8dp"/>
+
+            <Button
+                android:id="@+id/btnViewServices"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:text="Xem dịch vụ chỉ định" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

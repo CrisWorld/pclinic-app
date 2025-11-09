@@ -44,6 +44,7 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract PatientDao patientDao();
     public abstract AdminDao adminDao();
     public abstract DoctorDao doctorDao();
+    public abstract ExaminationFormDao examinationFormDao();
     public abstract PrescriptionDao prescriptionDao();
     public abstract ServiceDao serviceDao();
     public abstract AppointmentDao appointmentDao();
@@ -55,4 +56,5 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract ExaminationFormDao examinationFormDao();
     public abstract ServiceExaminationFormDao serviceExaminationFormDao();
     public abstract PrescriptionExaminationFormDao prescriptionExaminationFormDao();
+    public abstract ServiceExaminationFormDao serviceExaminationFormDao();
 }

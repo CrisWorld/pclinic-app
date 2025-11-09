@@ -41,10 +41,13 @@ import data.enums.Enum;
 import data.model.Admin;
 import data.model.Appointment;
 import data.model.Doctor;
+import data.model.ExaminationForm;
 import data.model.Patient;
 import data.model.Prescription;
+import data.model.PrescriptionExaminationForm;
 import data.model.Review;
 import data.model.Service;
+import data.model.ServiceExaminationForm;
 import data.model.User;
 
 @Module
@@ -72,6 +75,17 @@ public class AppModule {
     @Singleton
     public UserDao provideUserDao(AppDatabase db) {
         return db.userDao();
+    }
+    @Provides
+    @Singleton
+    public PrescriptionExaminationFormDao providePrescriptionExaminationFormDao(AppDatabase db) {
+        return db.prescriptionExaminationFormDao();
+    }
+
+    @Provides
+    @Singleton
+    public ServiceExaminationFormDao provideServiceExaminationFormDao(AppDatabase db) {
+        return db.serviceExaminationFormDao();
     }
 
     @Provides
@@ -146,6 +160,7 @@ public class AppModule {
         return db.examinationFormDao();
     }
 
+<<<<<<< HEAD
     @Provides
     @Singleton
     public ServiceExaminationFormDao provideServiceExaminationFormDao(AppDatabase db) {
@@ -157,6 +172,8 @@ public class AppModule {
     public PrescriptionExaminationFormDao providePrescriptionExaminationFormDao(AppDatabase db) {
         return db.prescriptionExaminationFormDao();
     }
+=======
+>>>>>>> df27facefab14ba25e64f352cd7cdf82f543b454
 
     // custom
     public void seedDatabase(AppDatabase db) {
@@ -469,12 +486,12 @@ public class AppModule {
         apt.patientId = patientId;
         apt.createdAt = new Date();
         apt.startDate = startDate;
-        
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
         calendar.add(Calendar.HOUR, 1);
         apt.endDate = calendar.getTime();
-        
+
         apt.description = description;
         apt.status = status;
         return apt;
