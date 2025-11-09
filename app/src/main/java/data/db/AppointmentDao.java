@@ -55,5 +55,12 @@ public interface AppointmentDao {
             "ORDER BY a.startDate ASC")
     List<AppointmentWithDoctor> findUpcomingByPatient(long patientId, Date fromDate);
 
+    @Query("SELECT a.*, u.fullName AS fullName " +
+            "FROM appointments a " +
+            "JOIN doctors d ON a.doctorId = d.id " +
+            "JOIN users u ON d.userId = u.id " +
+            "WHERE a.id = :appointmentId LIMIT 1")
+    AppointmentWithDoctor getDetail(long appointmentId);
+
 
 }
