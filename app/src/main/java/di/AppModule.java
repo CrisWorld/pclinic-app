@@ -25,10 +25,13 @@ import data.db.AdminDao;
 import data.db.AppDatabase;
 import data.db.AppointmentDao;
 import data.db.DoctorDao;
+import data.db.ExaminationFormDao;
 import data.db.PatientDao;
 import data.db.PrescriptionDao;
+import data.db.PrescriptionExaminationFormDao;
 import data.db.ReviewDao;
 import data.db.ServiceDao;
+import data.db.ServiceExaminationFormDao;
 import data.db.UserDao;
 import data.db.WorkScheduleDao;
 import data.db.admin.AdminDoctorDao;
@@ -38,10 +41,13 @@ import data.enums.Enum;
 import data.model.Admin;
 import data.model.Appointment;
 import data.model.Doctor;
+import data.model.ExaminationForm;
 import data.model.Patient;
 import data.model.Prescription;
+import data.model.PrescriptionExaminationForm;
 import data.model.Review;
 import data.model.Service;
+import data.model.ServiceExaminationForm;
 import data.model.User;
 
 @Module
@@ -69,6 +75,17 @@ public class AppModule {
     @Singleton
     public UserDao provideUserDao(AppDatabase db) {
         return db.userDao();
+    }
+    @Provides
+    @Singleton
+    public PrescriptionExaminationFormDao providePrescriptionExaminationFormDao(AppDatabase db) {
+        return db.prescriptionExaminationFormDao();
+    }
+
+    @Provides
+    @Singleton
+    public ServiceExaminationFormDao provideServiceExaminationFormDao(AppDatabase db) {
+        return db.serviceExaminationFormDao();
     }
 
     @Provides
@@ -137,6 +154,13 @@ public class AppModule {
         return db.adminServiceDao();
     }
 
+    @Provides
+    @Singleton
+    public ExaminationFormDao provideExaminationFormDao(AppDatabase db) {
+        return db.examinationFormDao();
+    }
+
+
     // custom
     public void seedDatabase(AppDatabase db) {
         Executors.newSingleThreadExecutor().execute(() -> {
@@ -195,25 +219,71 @@ public class AppModule {
             // Seed Appointments for testing
             long doctorId = 1; // First doctor
             long patientId = 1; // First patient
-            
+
             Calendar calendar = Calendar.getInstance();
-            
+
             // Upcoming appointment 1 - Tomorrow
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             calendar.set(Calendar.HOUR_OF_DAY, 9);
             calendar.set(Calendar.MINUTE, 0);
             Appointment apt1 = createAppointment(doctorId, patientId, calendar.getTime(), "Khám định kỳ", Enum.AppointmentStatus.CONFIRMED);
-            
+
             // Upcoming appointment 2 - In 3 days
             calendar.add(Calendar.DAY_OF_MONTH, 2);
             calendar.set(Calendar.HOUR_OF_DAY, 14);
             Appointment apt2 = createAppointment(doctorId, patientId, calendar.getTime(), "Tái khám", Enum.AppointmentStatus.CONFIRMED);
-            
+
             // Upcoming appointment 3 - In 5 days
             calendar.add(Calendar.DAY_OF_MONTH, 2);
             calendar.set(Calendar.HOUR_OF_DAY, 10);
             Appointment apt3 = createAppointment(doctorId, patientId, calendar.getTime(), "Xét nghiệm máu", Enum.AppointmentStatus.CONFIRMED);
-            
+            // === SEED DATA FOR HISTORY & PRESCRIPTION TEST ===
+            calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, -7); // 1 tuần trước
+            Appointment completedAppointmentForTest = createAppointment(doctorId, patientId, calendar.getTime(), "Đau đầu, cảm cúm", Enum.AppointmentStatus.DONE);
+            long completedAppointmentId = db.appointmentDao().insert(completedAppointmentForTest);
+
+            // Tạo phiếu khám cho cuộc hẹn đã hoàn thành này
+            ExaminationForm form = new ExaminationForm();
+            form.appointmentId = completedAppointmentId;
+            form.patientId = patientId;
+            form.doctorId = doctorId;
+            form.diagnosis = "Cảm cúm siêu vi";
+            form.medicalHistory = "Bệnh nhân không có tiền sử bệnh lý đặc biệt.";
+            form.examinationDate = calendar.getTime();
+            form.grandTotal = 250000 + 12000 + 25000; // Tổng tiền tạm tính
+            long examinationId = db.examinationFormDao().insert(form);
+
+            // Thêm 1 dịch vụ vào phiếu khám
+            ServiceExaminationForm sef = new ServiceExaminationForm();
+            sef.examinationId = examinationId;
+            sef.serviceId = 2; // Xét nghiệm máu
+            sef.price = 250000;
+            sef.appointmentId = completedAppointmentId;
+            sef.patientId = patientId;
+            sef.doctorId = doctorId;
+            db.serviceExaminationFormDao().insert(sef);
+
+            // Thêm 2 loại thuốc vào phiếu khám
+            PrescriptionExaminationForm pef1 = new PrescriptionExaminationForm();
+            pef1.examinationId = examinationId;
+            pef1.prescriptionId = 1; // Paracetamol 500mg
+            pef1.price = 12000;
+            pef1.appointmentId = completedAppointmentId;
+            pef1.patientId = patientId;
+            pef1.doctorId = doctorId;
+            db.prescriptionExaminationFormDao().insert(pef1);
+
+            PrescriptionExaminationForm pef2 = new PrescriptionExaminationForm();
+            pef2.examinationId = examinationId;
+            pef2.prescriptionId = 2; // Amoxicillin 500mg
+            pef2.price = 25000;
+            pef2.appointmentId = completedAppointmentId;
+            pef2.patientId = patientId;
+            pef2.doctorId = doctorId;
+            db.prescriptionExaminationFormDao().insert(pef2);
+            // === END OF SEED DATA FOR TEST ===
+
             // Completed appointments for stats
             calendar.add(Calendar.DAY_OF_MONTH, -30);
             for (int i = 0; i < 15; i++) {
@@ -221,7 +291,7 @@ public class AppModule {
                 db.appointmentDao().insert(completed);
                 calendar.add(Calendar.DAY_OF_MONTH, -2);
             }
-            
+
             // Cancelled appointments for stats
             calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_MONTH, -20);
@@ -230,18 +300,18 @@ public class AppModule {
                 db.appointmentDao().insert(cancelled);
                 calendar.add(Calendar.DAY_OF_MONTH, -3);
             }
-            
+
             db.appointmentDao().insert(apt1);
             db.appointmentDao().insert(apt2);
             db.appointmentDao().insert(apt3);
-            
+
             // Seed Reviews for testing
             Review review1 = createReview(doctorId, patientId, 1, 5, "Bác sĩ rất tận tình và chu đáo. Giải thích kỹ càng!");
             Review review2 = createReview(doctorId, patientId, 2, 4, "Khám bệnh tốt, thời gian chờ hơi lâu");
             Review review3 = createReview(doctorId, patientId, 3, 5, "Rất hài lòng với dịch vụ");
             Review review4 = createReview(doctorId, patientId, 4, 5, "Bác sĩ chuyên nghiệp");
             Review review5 = createReview(doctorId, patientId, 5, 4, "Tốt, sẽ quay lại");
-            
+
             db.reviewDao().insert(review1);
             db.reviewDao().insert(review2);
             db.reviewDao().insert(review3);
@@ -256,12 +326,12 @@ public class AppModule {
         apt.patientId = patientId;
         apt.createdAt = new Date();
         apt.startDate = startDate;
-        
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(startDate);
         calendar.add(Calendar.HOUR, 1);
         apt.endDate = calendar.getTime();
-        
+
         apt.description = description;
         apt.status = status;
         return apt;

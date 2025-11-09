@@ -35,9 +35,9 @@ import androidx.room.PrimaryKey;
                         onDelete = CASCADE
                 ),
                 @ForeignKey(
-                        entity = Prescription.class,
+                        entity = Service.class,
                         parentColumns = "id",
-                        childColumns = "prescriptionId",
+                        childColumns = "serviceId",
                         onDelete = NO_ACTION
                 )
         }
@@ -46,7 +46,7 @@ public class ServiceExaminationForm {
     @PrimaryKey(autoGenerate = true)
     public int id;
     public double price;
-    public long prescriptionId;
+    public long serviceId;
     public long appointmentId;
     public long examinationId;
     public long patientId;

@@ -83,12 +83,32 @@
             <TextView android:id="@+id/tvDescription" android:padding="16dp" android:textSize="16sp" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/textSecondary" android:text="📝 Ghi chú: "/>
         </com.google.android.material.card.MaterialCardView>
 
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight">
+
+            <TextView
+                android:id="@+id/tvTotalCost"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:text="💰 Tổng chi phí: 0đ"
+                android:textColor="@color/success"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- Các nút chức năng -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="24dp">
+            android:layout_marginTop="12dp"> <!-- Giảm margin top ở đây -->
 
             <Button
                 android:id="@+id/btnViewPrescription"
