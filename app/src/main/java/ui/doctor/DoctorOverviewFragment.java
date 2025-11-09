@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,14 +14,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
 import data.model.Appointment;
+import data.model.Doctor;
 import data.model.Review;
 import data.repository.AppointmentRepository;
+import data.repository.DoctorRepository;
 import data.repository.ReviewRepository;
+import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
 import util.AuthUtils;
 
@@ -32,6 +37,9 @@ public class DoctorOverviewFragment extends Fragment {
 
     @Inject
     ReviewRepository reviewRepository;
+    
+    @Inject
+    DoctorRepository doctorRepository;
 
     private TextView tvTotalAppointments;
     private TextView tvCancelledAppointments;
@@ -42,7 +50,7 @@ public class DoctorOverviewFragment extends Fragment {
     private AppointmentAdapter appointmentAdapter;
     private ReviewAdapter reviewAdapter;
 
-    private long doctorId;
+    private long doctorId = -1;
 
     @Nullable
     @Override
@@ -51,9 +59,8 @@ public class DoctorOverviewFragment extends Fragment {
         View view = inflater.inflate(R.layout.doctor_fragment_overview, container, false);
 
         initViews(view);
-        loadDoctorId();
         setupRecyclerViews();
-        loadData();
+        loadDoctorId(); // This will call loadData() after getting doctorId
 
         return view;
     }
@@ -68,12 +75,25 @@ public class DoctorOverviewFragment extends Fragment {
     }
 
     private void loadDoctorId() {
-        // Get doctor ID from AuthUtils - for now using placeholder
-        // In real app, you'd get this from the logged in user
         long userId = AuthUtils.getUserId(requireContext());
-        // TODO: Get actual doctorId from userId via DoctorRepository
-        // For demo purposes, using userId as doctorId
-        doctorId = 1; // Placeholder - should query from database
+        
+        if (userId == -1) {
+            Toasty.error(requireContext(), "Chưa đăng nhập", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Executors.newSingleThreadExecutor().execute(() -> {
+            Doctor doctor = doctorRepository.findByUserIdSync(userId);
+            
+            requireActivity().runOnUiThread(() -> {
+                if (doctor != null) {
+                    doctorId = doctor.id;
+                    loadData();
+                } else {
+                    Toasty.error(requireContext(), "Không tìm thấy thông tin bác sĩ", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 
     private void setupRecyclerViews() {

@@ -29,6 +29,17 @@
                 android:padding="16dp"
                 android:gravity="center_vertical">
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBack"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    app:icon="@android:drawable/ic_menu_revert"
+                    app:iconTint="@color/colorPrimary"
+                    android:layout_marginEnd="12dp"/>
+
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -479,12 +490,17 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Thêm dịch vụ"
+                        android:textSize="13sp"
                         android:textColor="@color/white"
                         app:backgroundTint="@color/colorPrimary"
                         app:icon="@drawable/ic_add_circle"
                         app:iconGravity="textStart"
-                        android:layout_marginEnd="8dp"
-                        android:padding="12dp"/>
+                        app:iconTint="@color/white"
+                        android:layout_marginEnd="6dp"
+                        android:padding="10dp"
+                        android:minHeight="48dp"
+                        android:maxLines="2"
+                        android:ellipsize="end"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnCreatePrescription"
@@ -493,12 +509,17 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="Thêm đơn thuốc"
+                        android:textSize="13sp"
                         android:textColor="@color/white"
-                        app:backgroundTint="@color/colorPrimary"
+                        app:backgroundTint="@color/info"
                         app:icon="@drawable/ic_add_circle"
                         app:iconGravity="textStart"
-                        android:layout_marginStart="8dp"
-                        android:padding="12dp"/>
+                        app:iconTint="@color/white"
+                        android:layout_marginStart="6dp"
+                        android:padding="10dp"
+                        android:minHeight="48dp"
+                        android:maxLines="2"
+                        android:ellipsize="end"/>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

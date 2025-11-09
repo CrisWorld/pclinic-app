@@ -1,7 +1,5 @@
 package ui.doctor;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,12 +14,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -30,13 +26,11 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import data.db.AppointmentDao;
+import data.db.DoctorDao;
+import data.dto.AppointmentWithPatient;
 import data.enums.Enum;
-import data.model.Appointment;
 import data.model.Doctor;
-import data.model.User;
-import data.repository.AppointmentRepository;
-import data.repository.DoctorRepository;
-import data.repository.PatientRepository;
 import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
 import util.AuthUtils;
@@ -45,13 +39,10 @@ import util.AuthUtils;
 public class DoctorAppointmentFragment extends Fragment {
 
     @Inject
-    AppointmentRepository appointmentRepository;
+    AppointmentDao appointmentDao;
     
     @Inject
-    PatientRepository patientRepository;
-    
-    @Inject
-    DoctorRepository doctorRepository;
+    DoctorDao doctorDao;
 
     private TextView tvCurrentDate, tvTotalCount, tvConfirmedCount, tvDoneCount;
     private ChipGroup chipGroupFilter;
@@ -59,8 +50,7 @@ public class DoctorAppointmentFragment extends Fragment {
     private LinearLayout layoutEmpty;
     private TodayAppointmentAdapter adapter;
 
-    private List<Appointment> allAppointments = new ArrayList<>();
-    private List<User> allPatients = new ArrayList<>();
+    private List<AppointmentWithPatient> allAppointments = new ArrayList<>();
     private long doctorId = -1;
     private Enum.AppointmentStatus selectedStatus = null;
 
@@ -102,7 +92,7 @@ public class DoctorAppointmentFragment extends Fragment {
         
         // Load doctor info from userId in background
         Executors.newSingleThreadExecutor().execute(() -> {
-            Doctor doctor = doctorRepository.findByUserIdSync(userId);
+            Doctor doctor = doctorDao.findByUserId((int) userId);
             
             requireActivity().runOnUiThread(() -> {
                 if (doctor != null) {
@@ -116,20 +106,25 @@ public class DoctorAppointmentFragment extends Fragment {
     }
 
     private void setupRecyclerView() {
-        adapter = new TodayAppointmentAdapter(new TodayAppointmentAdapter.OnAppointmentActionListener() {
+        adapter = new TodayAppointmentAdapter(new TodayAppointmentAdapter.OnActionClickListener() {
             @Override
-            public void onViewDetail(Appointment appointment, User patient) {
-                showAppointmentDetail(appointment, patient);
+            public void onCreateExaminationForm(AppointmentWithPatient appointment) {
+                CreateExaminationFormFragment fragment = CreateExaminationFormFragment.newInstance(appointment);
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
 
             @Override
-            public void onConfirm(Appointment appointment) {
-                confirmAppointment(appointment);
-            }
-
-            @Override
-            public void onComplete(Appointment appointment) {
-                completeAppointment(appointment);
+            public void onViewExaminationForm(AppointmentWithPatient appointment) {
+                ViewExaminationFormFragment fragment = ViewExaminationFormFragment.newInstance(appointment);
+                requireActivity().getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.fragmentContainer, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
 
@@ -167,20 +162,10 @@ public class DoctorAppointmentFragment extends Fragment {
         String today = dateFormat.format(new Date());
 
         Executors.newSingleThreadExecutor().execute(() -> {
-            List<Appointment> appointments = appointmentRepository.getAppointmentsByDoctorAndDateSync(doctorId, today);
-            
-            // Load patient info for each appointment
-            List<User> patients = new ArrayList<>();
-            if (appointments != null) {
-                for (Appointment appointment : appointments) {
-                    User patient = patientRepository.getUserByPatientIdSync(appointment.patientId);
-                    patients.add(patient != null ? patient : new User());
-                }
-            }
+            List<AppointmentWithPatient> appointments = appointmentDao.findByDoctorAndDateWithPatient(doctorId, today);
 
             requireActivity().runOnUiThread(() -> {
                 allAppointments = appointments != null ? appointments : new ArrayList<>();
-                allPatients = patients;
                 updateStats();
                 filterAppointments();
             });
@@ -188,18 +173,15 @@ public class DoctorAppointmentFragment extends Fragment {
     }
 
     private void filterAppointments() {
-        List<Appointment> filtered = new ArrayList<>();
-        List<User> filteredPatients = new ArrayList<>();
+        List<AppointmentWithPatient> filtered = new ArrayList<>();
 
-        for (int i = 0; i < allAppointments.size(); i++) {
-            Appointment appointment = allAppointments.get(i);
+        for (AppointmentWithPatient appointment : allAppointments) {
             if (selectedStatus == null || appointment.status == selectedStatus) {
                 filtered.add(appointment);
-                filteredPatients.add(allPatients.get(i));
             }
         }
 
-        adapter.setData(filtered, filteredPatients);
+        adapter.setAppointments(filtered);
         
         // Show/hide empty state
         if (filtered.isEmpty()) {
@@ -216,7 +198,7 @@ public class DoctorAppointmentFragment extends Fragment {
         int confirmed = 0;
         int done = 0;
 
-        for (Appointment appointment : allAppointments) {
+        for (AppointmentWithPatient appointment : allAppointments) {
             if (appointment.status == Enum.AppointmentStatus.CONFIRMED) {
                 confirmed++;
             } else if (appointment.status == Enum.AppointmentStatus.DONE) {
@@ -227,36 +209,5 @@ public class DoctorAppointmentFragment extends Fragment {
         tvTotalCount.setText(String.valueOf(total));
         tvConfirmedCount.setText(String.valueOf(confirmed));
         tvDoneCount.setText(String.valueOf(done));
-    }
-
-    private void showAppointmentDetail(Appointment appointment, User patient) {
-        AppointmentDetailBottomSheet bottomSheet = AppointmentDetailBottomSheet.newInstance(appointment);
-        bottomSheet.show(getParentFragmentManager(), "appointment_detail");
-    }
-
-    private void confirmAppointment(Appointment appointment) {
-        appointment.status = Enum.AppointmentStatus.CONFIRMED;
-        
-        Executors.newSingleThreadExecutor().execute(() -> {
-            appointmentRepository.updateSync(appointment);
-            
-            requireActivity().runOnUiThread(() -> {
-                Toasty.success(requireContext(), "Đã xác nhận lịch hẹn", Toast.LENGTH_SHORT).show();
-                loadTodayAppointments();
-            });
-        });
-    }
-
-    private void completeAppointment(Appointment appointment) {
-        appointment.status = Enum.AppointmentStatus.DONE;
-        
-        Executors.newSingleThreadExecutor().execute(() -> {
-            appointmentRepository.updateSync(appointment);
-            
-            requireActivity().runOnUiThread(() -> {
-                Toasty.success(requireContext(), "Đã hoàn thành lịch hẹn", Toast.LENGTH_SHORT).show();
-                loadTodayAppointments();
-            });
-        });
     }
 }

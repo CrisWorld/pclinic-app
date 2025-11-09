@@ -112,4 +112,13 @@ public class AppointmentRepository {
         });
         return result;
     }
+
+    // Synchronous methods for direct use
+    public List<Appointment> getAppointmentsByDoctorAndDateSync(long doctorId, String date) {
+        return appointmentDao.findByDoctorAndDate(doctorId, date);
+    }
+
+    public void updateSync(Appointment appointment) {
+        appointmentDao.update(appointment);
+    }
 }

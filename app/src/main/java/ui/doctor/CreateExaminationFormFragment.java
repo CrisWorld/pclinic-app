@@ -272,6 +272,16 @@ public class CreateExaminationFormFragment extends Fragment {
             // TODO: Open edit patient dialog/fragment
             Toasty.info(requireContext(), "Tính năng chỉnh sửa bệnh nhân đang được phát triển", Toast.LENGTH_SHORT).show();
         });
+        
+        // Back button
+        View btnBack = getView() != null ? getView().findViewById(R.id.btnBack) : null;
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().onBackPressed();
+                }
+            });
+        }
     }
 
     private void checkExistingExaminationForm() {

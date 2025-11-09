@@ -156,8 +156,11 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Tạo phiếu khám"
+                android:textColor="@color/white"
+                app:backgroundTint="@color/colorPrimary"
                 app:icon="@drawable/ic_add_circle"
-                app:iconGravity="textStart" />
+                app:iconGravity="textStart"
+                app:iconTint="@color/white" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_complete"
