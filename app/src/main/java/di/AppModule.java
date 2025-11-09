@@ -76,17 +76,7 @@ public class AppModule {
     public UserDao provideUserDao(AppDatabase db) {
         return db.userDao();
     }
-    @Provides
-    @Singleton
-    public PrescriptionExaminationFormDao providePrescriptionExaminationFormDao(AppDatabase db) {
-        return db.prescriptionExaminationFormDao();
-    }
 
-    @Provides
-    @Singleton
-    public ServiceExaminationFormDao provideServiceExaminationFormDao(AppDatabase db) {
-        return db.serviceExaminationFormDao();
-    }
 
     @Provides
     @Singleton
@@ -160,7 +150,6 @@ public class AppModule {
         return db.examinationFormDao();
     }
 
-<<<<<<< HEAD
     @Provides
     @Singleton
     public ServiceExaminationFormDao provideServiceExaminationFormDao(AppDatabase db) {
@@ -172,8 +161,6 @@ public class AppModule {
     public PrescriptionExaminationFormDao providePrescriptionExaminationFormDao(AppDatabase db) {
         return db.prescriptionExaminationFormDao();
     }
-=======
->>>>>>> df27facefab14ba25e64f352cd7cdf82f543b454
 
     // custom
     public void seedDatabase(AppDatabase db) {
