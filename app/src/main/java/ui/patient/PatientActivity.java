@@ -76,11 +76,12 @@ public class PatientActivity extends AppCompatActivity {
                             .commit();
                     toolbar.setTitle("Tổng quan");
                 }
-                else if (id == R.id.nav_book_appointment) {
+                else if (id == R.id.nav_upcoming_appointments) {
                     getSupportFragmentManager()
                             .beginTransaction()
-                            .replace(R.id.fragmentContainer, new AppointmentReservationFragment())
+                            .replace(R.id.fragmentContainer, new AppointmentListFragment())
                             .commit();
+                    toolbar.setTitle("Lịch hẹn sắp tới");
                 } else if (id == R.id.nav_history) {
                     getSupportFragmentManager()
                             .beginTransaction()
