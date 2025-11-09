@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundLight"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header with Title and Save Button -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/surfaceLight"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tạo Phiếu Khám"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="24sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvExaminationCode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mã: --"
+                        android:textSize="12sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSave"
+                    style="@style/Widget.MaterialComponents.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lưu"
+                    android:textColor="@color/white"
+                    app:backgroundTint="@color/colorPrimary"
+                    app:icon="@android:drawable/ic_menu_save"
+                    app:iconGravity="textStart"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="20dp"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Patient Information Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dividerColor">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Patient Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="24dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Thông tin bệnh nhân"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEditPatient"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chỉnh sửa"
+                        android:textSize="12sp"
+                        app:icon="@android:drawable/ic_menu_edit"
+                        app:iconGravity="textStart"
+                        android:textColor="@color/colorPrimary"/>
+                </LinearLayout>
+
+                <!-- Patient Info Content -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <!-- Patient Avatar -->
+                    <com.google.android.material.card.MaterialCardView
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        app:cardCornerRadius="35dp"
+                        app:cardElevation="2dp"
+                        app:cardBackgroundColor="@color/colorPrimary"
+                        android:layout_marginEnd="16dp">
+                        <ImageView
+                            android:id="@+id/imgPatientAvatar"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scaleType="centerCrop"
+                            android:src="@android:drawable/ic_menu_myplaces"
+                            android:contentDescription="Patient avatar"
+                            android:tint="@color/white"/>
+                    </com.google.android.material.card.MaterialCardView>
+
+                    <!-- Patient Details -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/tvPatientName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Họ và Tên: Nguyễn Văn A"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary"/>
+
+                        <TextView
+                            android:id="@+id/tvPatientCode"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Mã: #P123456"
+                            android:textSize="13sp"
+                            android:textColor="@color/textSecondary"
+                            android:layout_marginTop="4dp"/>
+
+                        <TextView
+                            android:id="@+id/tvPatientPhone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="SĐT: 0785771092"
+                            android:textSize="13sp"
+                            android:textColor="@color/textSecondary"
+                            android:layout_marginTop="2dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- Patient Additional Info -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/dividerColor"
+                    android:layout_marginVertical="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tvPatientBirthDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Ngày sinh: 15/01/1995 - 29 tuổi"
+                        android:textSize="14sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginBottom="6dp"/>
+
+                    <TextView
+                        android:id="@+id/tvPatientGender"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Giới tính: Nam"
+                        android:textSize="14sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginBottom="6dp"/>
+
+                    <TextView
+                        android:id="@+id/tvPatientAddress"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Địa chỉ: 24 Nam Kỳ Khởi Nghĩa"
+                        android:textSize="14sp"
+                        android:textColor="@color/textSecondary"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Examination Form Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dividerColor">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <!-- Section Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="24dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Thông tin khám bệnh"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvExaminationDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="02/04/2025"
+                        android:textSize="12sp"
+                        android:textColor="@color/textSecondary"/>
+                </LinearLayout>
+
+                <!-- Input Fields Row 1: Medical History & General Condition -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2"
+                    android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="*Tiền sử bệnh án"
+                        app:hintTextColor="@color/textSecondary"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        android:layout_marginEnd="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etMedicalHistory"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine"
+                            android:minLines="2"
+                            android:maxLines="3"
+                            android:textColor="@color/textPrimary"
+                            android:textColorHint="@color/textHint"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="*Tổng trạng chung"
+                        app:hintTextColor="@color/textSecondary"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        android:layout_marginStart="8dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etGeneralCondition"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="textMultiLine"
+                            android:minLines="2"
+                            android:maxLines="3"
+                            android:textColor="@color/textPrimary"
+                            android:textColorHint="@color/textHint"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Input Fields Row 2: Vital Signs -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="4"
+                    android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="*Chiều cao (cm)"
+                        app:hintTextColor="@color/textSecondary"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        android:layout_marginEnd="6dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etHeight"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/textPrimary"
+                            android:textColorHint="@color/textHint"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Cân nặng (kg)"
+                        app:hintTextColor="@color/textSecondary"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etWeight"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/textPrimary"
+                            android:textColorHint="@color/textHint"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Mạch"
+                        app:hintTextColor="@color/textSecondary"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        android:layout_marginStart="4dp"
+                        android:layout_marginEnd="4dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etPulse"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"
+                            android:textColor="@color/textPrimary"
+                            android:textColorHint="@color/textHint"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Nhiệt độ"
+                        app:hintTextColor="@color/textSecondary"
+                        app:boxStrokeColor="@color/colorPrimary"
+                        android:layout_marginStart="6dp">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etTemperature"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"
+                            android:textColor="@color/textPrimary"
+                            android:textColorHint="@color/textHint"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <!-- Blood Pressure -->
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Huyết áp"
+                    app:hintTextColor="@color/textSecondary"
+                    app:boxStrokeColor="@color/colorPrimary"
+                    android:layout_marginBottom="16dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etBloodPressure"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"
+                        android:textColor="@color/textPrimary"
+                        android:textColorHint="@color/textHint"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Diagnosis Section -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="20dp"
+                        android:background="@color/colorAccent"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Chẩn đoán"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"/>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Nhập chẩn đoán..."
+                    app:hintTextColor="@color/textSecondary"
+                    app:boxStrokeColor="@color/colorAccent"
+                    android:layout_marginBottom="20dp">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDiagnosis"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:minLines="5"
+                        android:maxLines="10"
+                        android:gravity="top|start"
+                        android:scrollbars="vertical"
+                        android:textColor="@color/textPrimary"
+                        android:textColorHint="@color/textHint"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Action Buttons -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCreateService"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Thêm dịch vụ"
+                        android:textColor="@color/white"
+                        app:backgroundTint="@color/colorPrimary"
+                        app:icon="@drawable/ic_add_circle"
+                        app:iconGravity="textStart"
+                        android:layout_marginEnd="8dp"
+                        android:padding="12dp"/>
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCreatePrescription"
+                        style="@style/Widget.MaterialComponents.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Thêm đơn thuốc"
+                        android:textColor="@color/white"
+                        app:backgroundTint="@color/colorPrimary"
+                        app:icon="@drawable/ic_add_circle"
+                        app:iconGravity="textStart"
+                        android:layout_marginStart="8dp"
+                        android:padding="12dp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>

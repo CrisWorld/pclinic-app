@@ -1,43 +1,49 @@
 package ui.doctor;
 
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import data.dto.AppointmentWithPatient;
 import data.enums.Enum;
+import data.model.Appointment;
+import data.model.User;
 import example.pclinic.com.R;
 
 public class TodayAppointmentAdapter extends RecyclerView.Adapter<TodayAppointmentAdapter.ViewHolder> {
 
-    public interface OnActionClickListener {
-        void onCreateExaminationForm(AppointmentWithPatient appointment);
-        void onViewExaminationForm(AppointmentWithPatient appointment);
+    private List<Appointment> appointments = new ArrayList<>();
+    private List<User> patients = new ArrayList<>();
+    private OnAppointmentActionListener listener;
+
+    public interface OnAppointmentActionListener {
+        void onViewDetail(Appointment appointment, User patient);
+        void onConfirm(Appointment appointment);
+        void onComplete(Appointment appointment);
     }
 
-    private List<AppointmentWithPatient> appointments = new ArrayList<>();
-    private final OnActionClickListener listener;
-    private final SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-    private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-
-    public TodayAppointmentAdapter(OnActionClickListener listener) {
+    public TodayAppointmentAdapter(OnAppointmentActionListener listener) {
         this.listener = listener;
     }
 
-    public void setAppointments(List<AppointmentWithPatient> appointments) {
+    public void setData(List<Appointment> appointments, List<User> patients) {
         this.appointments = appointments != null ? appointments : new ArrayList<>();
+        this.patients = patients != null ? patients : new ArrayList<>();
         notifyDataSetChanged();
     }
 
@@ -45,14 +51,16 @@ public class TodayAppointmentAdapter extends RecyclerView.Adapter<TodayAppointme
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_appointment_today, parent, false);
+                .inflate(R.layout.item_today_appointment, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        AppointmentWithPatient appointment = appointments.get(position);
-        holder.bind(appointment, listener);
+        Appointment appointment = appointments.get(position);
+        User patient = patients.get(position);
+        
+        holder.bind(appointment, patient, listener);
     }
 
     @Override
@@ -61,128 +69,139 @@ public class TodayAppointmentAdapter extends RecyclerView.Adapter<TodayAppointme
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView tvTimeSlot;
-        TextView tvPatientName;
-        TextView tvPatientPhone;
-        TextView tvPatientGender;
-        TextView tvPatientAge;
-        TextView tvDescription;
-        TextView tvStatusBadge;
-        MaterialButton btnAction;
-        MaterialButton btnComplete;
-        MaterialButton btnSetAbsent;
+        TextView tvHour, tvDuration, tvPatientName, tvStatus;
+        TextView tvPatientPhone, tvPatientGender, tvDescription;
+        TextView tvCheckinTime;
+        LinearLayout layoutCheckin;
+        MaterialButton btnViewDetail, btnAction;
 
-        ViewHolder(View view) {
-            super(view);
-            tvTimeSlot = view.findViewById(R.id.tv_time_slot);
-            tvPatientName = view.findViewById(R.id.tv_patient_name);
-            tvPatientPhone = view.findViewById(R.id.tv_patient_phone);
-            tvPatientGender = view.findViewById(R.id.tv_patient_gender);
-            tvPatientAge = view.findViewById(R.id.tv_patient_age);
-            tvDescription = view.findViewById(R.id.tv_description);
-            tvStatusBadge = view.findViewById(R.id.tv_status_badge);
-            btnAction = view.findViewById(R.id.btn_create_examination);
-            btnComplete = view.findViewById(R.id.btn_complete);
-            btnSetAbsent = view.findViewById(R.id.btn_set_absent);
+        ViewHolder(@NonNull View itemView) {
+            super(itemView);
+            tvHour = itemView.findViewById(R.id.tv_hour);
+            tvDuration = itemView.findViewById(R.id.tv_duration);
+            tvPatientName = itemView.findViewById(R.id.tv_patient_name);
+            tvStatus = itemView.findViewById(R.id.tv_status);
+            tvPatientPhone = itemView.findViewById(R.id.tv_patient_phone);
+            tvPatientGender = itemView.findViewById(R.id.tv_patient_gender);
+            tvDescription = itemView.findViewById(R.id.tv_description);
+            tvCheckinTime = itemView.findViewById(R.id.tv_checkin_time);
+            layoutCheckin = itemView.findViewById(R.id.layout_checkin);
+            btnViewDetail = itemView.findViewById(R.id.btn_view_detail);
+            btnAction = itemView.findViewById(R.id.btn_action);
         }
 
-        void bind(AppointmentWithPatient appointment, OnActionClickListener listener) {
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
-
-            // Time slot
-            String timeSlot = timeFormat.format(appointment.startDate) + " - " + timeFormat.format(appointment.endDate);
-            tvTimeSlot.setText(timeSlot);
+        void bind(Appointment appointment, User patient, OnAppointmentActionListener listener) {
+            SimpleDateFormat hourFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            
+            // Time display
+            tvHour.setText(hourFormat.format(appointment.startDate));
+            
+            // Calculate duration
+            long durationMs = appointment.endDate.getTime() - appointment.startDate.getTime();
+            long durationMinutes = durationMs / (1000 * 60);
+            tvDuration.setText(durationMinutes + "p");
 
             // Patient info
-            tvPatientName.setText(appointment.patientName != null ? appointment.patientName : "N/A");
-            tvPatientPhone.setText(appointment.patientPhone != null ? appointment.patientPhone : "N/A");
-
-            // Gender
-            if (appointment.patientGender != null) {
-                String genderLower = appointment.patientGender.toLowerCase();
-                String genderText;
-                if (genderLower.equals("male") || genderLower.equals("nam")) {
+            tvPatientName.setText(patient.fullName);
+            tvPatientPhone.setText("📱 " + (patient.phone != null ? patient.phone : "Chưa có SĐT"));
+            
+            // Gender mapping
+            String genderText = "Khác";
+            if (patient.gender != null) {
+                if (patient.gender.equalsIgnoreCase("MALE") || patient.gender.equalsIgnoreCase("Nam")) {
                     genderText = "Nam";
-                } else if (genderLower.equals("female") || genderLower.equals("nữ")) {
+                } else if (patient.gender.equalsIgnoreCase("FEMALE") || patient.gender.equalsIgnoreCase("Nữ")) {
                     genderText = "Nữ";
-                } else {
-                    genderText = "Khác";
                 }
-                tvPatientGender.setText(genderText);
-            } else {
-                tvPatientGender.setText("N/A");
             }
-
-            // Age
-            if (appointment.patientBirthDate != null) {
-                Calendar birthDate = Calendar.getInstance();
-                birthDate.setTimeInMillis(appointment.patientBirthDate);
-                Calendar today = Calendar.getInstance();
-                int age = today.get(Calendar.YEAR) - birthDate.get(Calendar.YEAR);
-                if (today.get(Calendar.DAY_OF_YEAR) < birthDate.get(Calendar.DAY_OF_YEAR)) {
-                    age--;
-                }
-                tvPatientAge.setText(age + " tuổi");
-            } else {
-                tvPatientAge.setText("N/A");
-            }
+            tvPatientGender.setText(genderText);
 
             // Description
-            if (appointment.description != null && !appointment.description.isEmpty()) {
-                tvDescription.setText("Mô tả: " + appointment.description);
+            tvDescription.setText(appointment.description != null && !appointment.description.isEmpty() 
+                    ? appointment.description 
+                    : "Chưa có mô tả");
+
+            // Status badge
+            updateStatusBadge(appointment.status);
+
+            // Check-in time
+            if (appointment.checkInDate != null) {
+                layoutCheckin.setVisibility(View.VISIBLE);
+                tvCheckinTime.setText(hourFormat.format(appointment.checkInDate));
             } else {
-                tvDescription.setText("Mô tả: Không có mô tả");
+                layoutCheckin.setVisibility(View.GONE);
             }
 
-            // Status and action button
-            Enum.AppointmentStatus status = appointment.status;
-            if (status == Enum.AppointmentStatus.DONE) {
-                // Completed - show "Xem phiếu khám"
-                tvStatusBadge.setText("Khám xong");
-                tvStatusBadge.setBackgroundResource(R.drawable.status_badge_completed);
-                tvStatusBadge.setTextColor(0xFFFFFFFF); // White text
-                btnAction.setText("Xem phiếu khám");
-                btnAction.setIconResource(android.R.drawable.ic_menu_view);
-                btnAction.setOnClickListener(v -> {
-                    if (listener != null) {
-                        listener.onViewExaminationForm(appointment);
+            // Action button based on status
+            updateActionButton(appointment);
+
+            // Click listeners
+            btnViewDetail.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onViewDetail(appointment, patient);
+                }
+            });
+
+            btnAction.setOnClickListener(v -> {
+                if (listener != null) {
+                    if (appointment.status == Enum.AppointmentStatus.PENDING) {
+                        listener.onConfirm(appointment);
+                    } else if (appointment.status == Enum.AppointmentStatus.CONFIRMED) {
+                        listener.onComplete(appointment);
                     }
-                });
-                btnAction.setVisibility(View.VISIBLE);
-                btnComplete.setVisibility(View.GONE);
-                btnSetAbsent.setVisibility(View.GONE);
-            } else if (status == Enum.AppointmentStatus.PENDING || status == Enum.AppointmentStatus.CONFIRMED) {
-                // Waiting - show "Tạo phiếu khám"
-                tvStatusBadge.setText("Đang chờ");
-                tvStatusBadge.setBackgroundResource(R.drawable.status_badge_waiting);
-                tvStatusBadge.setTextColor(0xFFFFFFFF); // White text
-                btnAction.setText("Tạo phiếu khám");
-                btnAction.setIconResource(android.R.drawable.ic_menu_edit);
-                btnAction.setOnClickListener(v -> {
-                    if (listener != null) {
-                        listener.onCreateExaminationForm(appointment);
-                    }
-                });
-                btnAction.setVisibility(View.VISIBLE);
-                btnComplete.setVisibility(View.GONE);
-                btnSetAbsent.setVisibility(View.GONE);
-            } else if (status == Enum.AppointmentStatus.ABSENT) {
-                // Absent
-                tvStatusBadge.setText("Vắng mặt");
-                tvStatusBadge.setBackgroundResource(R.drawable.status_badge_absent);
-                tvStatusBadge.setTextColor(0xFFFFFFFF); // White text
-                btnAction.setText("Tạo phiếu khám");
-                btnAction.setIconResource(android.R.drawable.ic_menu_edit);
-                btnAction.setOnClickListener(v -> {
-                    if (listener != null) {
-                        listener.onCreateExaminationForm(appointment);
-                    }
-                });
-                btnAction.setVisibility(View.VISIBLE);
-                btnComplete.setVisibility(View.GONE);
-                btnSetAbsent.setVisibility(View.GONE);
+                }
+            });
+        }
+
+        private void updateStatusBadge(Enum.AppointmentStatus status) {
+            int backgroundRes;
+            String statusText;
+
+            switch (status) {
+                case PENDING:
+                    backgroundRes = R.drawable.bg_status_pending;
+                    statusText = "Chờ xác nhận";
+                    break;
+                case CONFIRMED:
+                    backgroundRes = R.drawable.bg_status_confirmed;
+                    statusText = "Đã xác nhận";
+                    break;
+                case DONE:
+                    backgroundRes = R.drawable.bg_status_done;
+                    statusText = "Hoàn thành";
+                    break;
+                case ABSENT:
+                    backgroundRes = R.drawable.bg_status_pending;
+                    statusText = "Vắng mặt";
+                    break;
+                default:
+                    backgroundRes = R.drawable.bg_status_pending;
+                    statusText = "Không xác định";
+            }
+
+            tvStatus.setBackgroundResource(backgroundRes);
+            tvStatus.setText(statusText);
+        }
+
+        private void updateActionButton(Appointment appointment) {
+            switch (appointment.status) {
+                case PENDING:
+                    btnAction.setVisibility(View.VISIBLE);
+                    btnAction.setText("Xác nhận");
+                    btnAction.setBackgroundTintList(ContextCompat.getColorStateList(
+                            itemView.getContext(), R.color.colorPrimary));
+                    break;
+                case CONFIRMED:
+                    btnAction.setVisibility(View.VISIBLE);
+                    btnAction.setText("Hoàn thành");
+                    btnAction.setBackgroundTintList(ContextCompat.getColorStateList(
+                            itemView.getContext(), R.color.success));
+                    break;
+                case DONE:
+                case ABSENT:
+                    btnAction.setVisibility(View.GONE);
+                    break;
             }
         }
     }
 }
-
