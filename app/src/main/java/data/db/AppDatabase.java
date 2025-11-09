@@ -34,13 +34,14 @@ import data.model.WorkSchedule;
         Service.class,
         ServiceExaminationForm.class,
         WorkSchedule.class
-}, version = 4)
+}, version = 6)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
     public abstract UserDao userDao();
     public abstract PatientDao patientDao();
     public abstract AdminDao adminDao();
     public abstract DoctorDao doctorDao();
+    public abstract ExaminationFormDao examinationFormDao();
     public abstract PrescriptionDao prescriptionDao();
     public abstract ServiceDao serviceDao();
     public abstract AppointmentDao appointmentDao();
@@ -49,4 +50,6 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract AdminDoctorDao adminDoctorDao();
     public abstract AdminPrescriptionDao adminPrescriptionDao();
     public abstract AdminServiceDao adminServiceDao();
+    public abstract PrescriptionExaminationFormDao prescriptionExaminationFormDao();
+    public abstract ServiceExaminationFormDao serviceExaminationFormDao();
 }

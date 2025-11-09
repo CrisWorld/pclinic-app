@@ -7,6 +7,7 @@ import androidx.room.Query;
 
 import java.util.List;
 
+import data.dto.ServiceDetailDto;
 import data.model.Service;
 
 @Dao
@@ -39,4 +40,16 @@ public interface ServiceDao {
     // 🔹 Xóa tất cả
     @Query("DELETE FROM services")
     void deleteAll();
+
+    @Query("SELECT " +
+            "s.name AS serviceName, " +
+            "s.code AS serviceCode, " +
+            "sef.price AS price " +
+            "FROM serviceExaminationForms sef " +
+            "JOIN services s ON sef.serviceId = s.id " + // Giả sử cột là serviceId
+            "WHERE sef.examinationId = :examinationId")
+    List<ServiceDetailDto> findByExaminationId(long examinationId);
+
+    @Query("SELECT SUM(price) FROM serviceExaminationForms WHERE examinationId = :examinationId")
+    double sumPriceByExaminationId(long examinationId);
 }
