@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,14 +14,18 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import data.db.DoctorDao;
 import data.model.Appointment;
+import data.model.Doctor;
 import data.model.Review;
 import data.repository.AppointmentRepository;
 import data.repository.ReviewRepository;
+import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
 import util.AuthUtils;
 
@@ -32,6 +37,9 @@ public class DoctorOverviewFragment extends Fragment {
 
     @Inject
     ReviewRepository reviewRepository;
+    
+    @Inject
+    DoctorDao doctorDao;
 
     private TextView tvTotalAppointments;
     private TextView tvCancelledAppointments;
@@ -42,20 +50,21 @@ public class DoctorOverviewFragment extends Fragment {
     private AppointmentAdapter appointmentAdapter;
     private ReviewAdapter reviewAdapter;
 
-    private long doctorId;
+    private long doctorId = -1;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.doctor_fragment_overview, container, false);
+        return inflater.inflate(R.layout.doctor_fragment_overview, container, false);
+    }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         initViews(view);
-        loadDoctorId();
         setupRecyclerViews();
-        loadData();
-
-        return view;
+        loadDoctorId(); // This will call loadData() after getting doctorId
     }
 
     private void initViews(View view) {
@@ -68,12 +77,29 @@ public class DoctorOverviewFragment extends Fragment {
     }
 
     private void loadDoctorId() {
-        // Get doctor ID from AuthUtils - for now using placeholder
-        // In real app, you'd get this from the logged in user
         long userId = AuthUtils.getUserId(requireContext());
-        // TODO: Get actual doctorId from userId via DoctorRepository
-        // For demo purposes, using userId as doctorId
-        doctorId = 1; // Placeholder - should query from database
+        
+        if (userId == -1) {
+            Toasty.error(requireContext(), "Chưa đăng nhập", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Executors.newSingleThreadExecutor().execute(() -> {
+            Doctor doctor = doctorDao.findByUserId((int) userId);
+            
+            if (getActivity() != null && isAdded()) {
+                getActivity().runOnUiThread(() -> {
+                    if (doctor != null) {
+                        doctorId = doctor.id;
+                        loadData();
+                    } else {
+                        if (getContext() != null) {
+                            Toasty.error(getContext(), "Không tìm thấy thông tin bác sĩ", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void setupRecyclerViews() {
@@ -89,23 +115,27 @@ public class DoctorOverviewFragment extends Fragment {
     }
 
     private void loadData() {
+        if (!isAdded() || getView() == null || doctorId == -1) {
+            return;
+        }
+
         // Load total completed appointments
         appointmentRepository.getCompletedCount(doctorId).observe(getViewLifecycleOwner(), count -> {
-            if (count != null) {
+            if (isAdded() && tvTotalAppointments != null && count != null) {
                 tvTotalAppointments.setText(String.valueOf(count));
             }
         });
 
         // Load cancelled appointments
         appointmentRepository.getCancelledCount(doctorId).observe(getViewLifecycleOwner(), count -> {
-            if (count != null) {
+            if (isAdded() && tvCancelledAppointments != null && count != null) {
                 tvCancelledAppointments.setText(String.valueOf(count));
             }
         });
 
         // Load upcoming appointments
         appointmentRepository.getConfirmedUpcoming(doctorId).observe(getViewLifecycleOwner(), appointments -> {
-            if (appointments != null) {
+            if (isAdded() && appointmentAdapter != null && appointments != null) {
                 List<Appointment> limitedList = appointments.size() > 5 
                     ? appointments.subList(0, 5) 
                     : appointments;
@@ -115,21 +145,21 @@ public class DoctorOverviewFragment extends Fragment {
 
         // Load average rating
         reviewRepository.getAverageRating(doctorId).observe(getViewLifecycleOwner(), avgRating -> {
-            if (avgRating != null) {
+            if (isAdded() && tvAverageRating != null && avgRating != null) {
                 tvAverageRating.setText(String.format("%.1f", avgRating));
             }
         });
 
         // Load total reviews
         reviewRepository.getTotalReviews(doctorId).observe(getViewLifecycleOwner(), count -> {
-            if (count != null) {
+            if (isAdded() && tvTotalReviews != null && count != null) {
                 tvTotalReviews.setText(String.valueOf(count));
             }
         });
 
         // Load recent reviews
         reviewRepository.getRecentByDoctor(doctorId, 5).observe(getViewLifecycleOwner(), reviews -> {
-            if (reviews != null) {
+            if (isAdded() && reviewAdapter != null && reviews != null) {
                 reviewAdapter.setReviews(reviews);
             }
         });

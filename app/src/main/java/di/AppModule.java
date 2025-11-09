@@ -76,17 +76,7 @@ public class AppModule {
     public UserDao provideUserDao(AppDatabase db) {
         return db.userDao();
     }
-    @Provides
-    @Singleton
-    public PrescriptionExaminationFormDao providePrescriptionExaminationFormDao(AppDatabase db) {
-        return db.prescriptionExaminationFormDao();
-    }
 
-    @Provides
-    @Singleton
-    public ServiceExaminationFormDao provideServiceExaminationFormDao(AppDatabase db) {
-        return db.serviceExaminationFormDao();
-    }
 
     @Provides
     @Singleton
@@ -160,6 +150,17 @@ public class AppModule {
         return db.examinationFormDao();
     }
 
+    @Provides
+    @Singleton
+    public ServiceExaminationFormDao provideServiceExaminationFormDao(AppDatabase db) {
+        return db.serviceExaminationFormDao();
+    }
+
+    @Provides
+    @Singleton
+    public PrescriptionExaminationFormDao providePrescriptionExaminationFormDao(AppDatabase db) {
+        return db.prescriptionExaminationFormDao();
+    }
 
     // custom
     public void seedDatabase(AppDatabase db) {
@@ -188,14 +189,99 @@ public class AppModule {
             doctor.bio = "Chuyên khoa nội tổng quát";
             db.doctorDao().insert(doctor);
 
-            // Patient user
-            User patientUser = new User();
-            patientUser.fullName = "Nguyen Van A";
-            patientUser.email = "patient@pclinic.com";
-            patientUser.password = "Patient@123";
-            patientUser.role = data.enums.Enum.UserRole.PATIENT;
-            long patientUserId = db.userDao().insert(patientUser);
-            db.patientDao().insert(new Patient(patientUserId));
+            // Patient users - Multiple patients for testing
+            List<Long> patientUserIds = new ArrayList<>();
+            List<Long> patientIds = new ArrayList<>();
+            
+            // Patient 1
+            User patientUser1 = new User();
+            patientUser1.fullName = "Nguyễn Văn A";
+            patientUser1.email = "patient1@pclinic.com";
+            patientUser1.password = "Patient@123";
+            patientUser1.role = data.enums.Enum.UserRole.PATIENT;
+            patientUser1.phone = "0785771092";
+            patientUser1.gender = "MALE";
+            Calendar birthDate1 = Calendar.getInstance();
+            birthDate1.set(1995, Calendar.JANUARY, 15);
+            patientUser1.birthDate = birthDate1.getTimeInMillis();
+            patientUser1.address = "24 Nam Kỳ Khởi Nghĩa, Hòa Hải, TP Đà Nẵng";
+            long patientUserId1 = db.userDao().insert(patientUser1);
+            Patient patient1 = new Patient(patientUserId1);
+            long patientId1 = db.patientDao().insert(patient1);
+            patientUserIds.add(patientUserId1);
+            patientIds.add(patientId1);
+            
+            // Patient 2
+            User patientUser2 = new User();
+            patientUser2.fullName = "Trần Thị B";
+            patientUser2.email = "patient2@pclinic.com";
+            patientUser2.password = "Patient@123";
+            patientUser2.role = data.enums.Enum.UserRole.PATIENT;
+            patientUser2.phone = "0912345678";
+            patientUser2.gender = "FEMALE";
+            Calendar birthDate2 = Calendar.getInstance();
+            birthDate2.set(1990, Calendar.MARCH, 20);
+            patientUser2.birthDate = birthDate2.getTimeInMillis();
+            patientUser2.address = "123 Lê Duẩn, Hải Châu, TP Đà Nẵng";
+            long patientUserId2 = db.userDao().insert(patientUser2);
+            Patient patient2 = new Patient(patientUserId2);
+            long patientId2 = db.patientDao().insert(patient2);
+            patientUserIds.add(patientUserId2);
+            patientIds.add(patientId2);
+            
+            // Patient 3
+            User patientUser3 = new User();
+            patientUser3.fullName = "Lê Văn C";
+            patientUser3.email = "patient3@pclinic.com";
+            patientUser3.password = "Patient@123";
+            patientUser3.role = data.enums.Enum.UserRole.PATIENT;
+            patientUser3.phone = "0987654321";
+            patientUser3.gender = "MALE";
+            Calendar birthDate3 = Calendar.getInstance();
+            birthDate3.set(1988, Calendar.JULY, 10);
+            patientUser3.birthDate = birthDate3.getTimeInMillis();
+            patientUser3.address = "456 Nguyễn Văn Linh, Thanh Khê, TP Đà Nẵng";
+            long patientUserId3 = db.userDao().insert(patientUser3);
+            Patient patient3 = new Patient(patientUserId3);
+            long patientId3 = db.patientDao().insert(patient3);
+            patientUserIds.add(patientUserId3);
+            patientIds.add(patientId3);
+            
+            // Patient 4
+            User patientUser4 = new User();
+            patientUser4.fullName = "Phạm Thị D";
+            patientUser4.email = "patient4@pclinic.com";
+            patientUser4.password = "Patient@123";
+            patientUser4.role = data.enums.Enum.UserRole.PATIENT;
+            patientUser4.phone = "0901234567";
+            patientUser4.gender = "FEMALE";
+            Calendar birthDate4 = Calendar.getInstance();
+            birthDate4.set(1992, Calendar.NOVEMBER, 5);
+            patientUser4.birthDate = birthDate4.getTimeInMillis();
+            patientUser4.address = "789 Trần Phú, Sơn Trà, TP Đà Nẵng";
+            long patientUserId4 = db.userDao().insert(patientUser4);
+            Patient patient4 = new Patient(patientUserId4);
+            long patientId4 = db.patientDao().insert(patient4);
+            patientUserIds.add(patientUserId4);
+            patientIds.add(patientId4);
+            
+            // Patient 5
+            User patientUser5 = new User();
+            patientUser5.fullName = "Hoàng Văn E";
+            patientUser5.email = "patient5@pclinic.com";
+            patientUser5.password = "Patient@123";
+            patientUser5.role = data.enums.Enum.UserRole.PATIENT;
+            patientUser5.phone = "0923456789";
+            patientUser5.gender = "MALE";
+            Calendar birthDate5 = Calendar.getInstance();
+            birthDate5.set(1998, Calendar.APRIL, 25);
+            patientUser5.birthDate = birthDate5.getTimeInMillis();
+            patientUser5.address = "321 Hoàng Diệu, Liên Chiểu, TP Đà Nẵng";
+            long patientUserId5 = db.userDao().insert(patientUser5);
+            Patient patient5 = new Patient(patientUserId5);
+            long patientId5 = db.patientDao().insert(patient5);
+            patientUserIds.add(patientUserId5);
+            patientIds.add(patientId5);
 
             List<Prescription> prescriptions = Arrays.asList(
                     createPrescription("Paracetamol 500mg", 12000, "PRC001"),
@@ -218,100 +304,161 @@ public class AppModule {
 
             // Seed Appointments for testing
             long doctorId = 1; // First doctor
-            long patientId = 1; // First patient
-
             Calendar calendar = Calendar.getInstance();
-
-            // Upcoming appointment 1 - Tomorrow
+            Calendar today = Calendar.getInstance();
+            today.set(Calendar.HOUR_OF_DAY, 0);
+            today.set(Calendar.MINUTE, 0);
+            today.set(Calendar.SECOND, 0);
+            today.set(Calendar.MILLISECOND, 0);
+            
+            // ========== TODAY'S APPOINTMENTS ==========
+            // Today - PENDING appointments (Đang chờ)
+            calendar.setTime(today.getTime());
+            calendar.set(Calendar.HOUR_OF_DAY, 8);
+            calendar.set(Calendar.MINUTE, 30);
+            Appointment todayPending1 = createAppointment(doctorId, patientIds.get(0), calendar.getTime(), 
+                "Bệnh nhân đăng ký khám tổng quát nhằm kiểm tra toàn diện về sức khỏe, bao gồm các xét nghiệm và kiểm tra lâm sàng", 
+                Enum.AppointmentStatus.PENDING);
+            db.appointmentDao().insert(todayPending1);
+            
+            calendar.set(Calendar.HOUR_OF_DAY, 9);
+            calendar.set(Calendar.MINUTE, 30);
+            Appointment todayPending2 = createAppointment(doctorId, patientIds.get(1), calendar.getTime(), 
+                "Khám sức khỏe định kỳ, kiểm tra huyết áp và tim mạch", 
+                Enum.AppointmentStatus.PENDING);
+            db.appointmentDao().insert(todayPending2);
+            
+            calendar.set(Calendar.HOUR_OF_DAY, 10);
+            calendar.set(Calendar.MINUTE, 0);
+            Appointment todayPending3 = createAppointment(doctorId, patientIds.get(2), calendar.getTime(), 
+                "Tư vấn về chế độ dinh dưỡng và tập luyện", 
+                Enum.AppointmentStatus.PENDING);
+            db.appointmentDao().insert(todayPending3);
+            
+            // Today - CONFIRMED appointments (Đang chờ - đã xác nhận)
+            calendar.set(Calendar.HOUR_OF_DAY, 14);
+            calendar.set(Calendar.MINUTE, 0);
+            Appointment todayConfirmed1 = createAppointment(doctorId, patientIds.get(3), calendar.getTime(), 
+                "Khám bệnh về đường hô hấp, ho khan kéo dài", 
+                Enum.AppointmentStatus.CONFIRMED);
+            db.appointmentDao().insert(todayConfirmed1);
+            
+            calendar.set(Calendar.HOUR_OF_DAY, 15);
+            calendar.set(Calendar.MINUTE, 30);
+            Appointment todayConfirmed2 = createAppointment(doctorId, patientIds.get(4), calendar.getTime(), 
+                "Tái khám sau điều trị, kiểm tra tiến triển bệnh", 
+                Enum.AppointmentStatus.CONFIRMED);
+            db.appointmentDao().insert(todayConfirmed2);
+            
+            // Today - DONE appointments (Đã khám xong)
+            calendar.set(Calendar.HOUR_OF_DAY, 7);
+            calendar.set(Calendar.MINUTE, 30);
+            Appointment todayDone1 = createAppointment(doctorId, patientIds.get(0), calendar.getTime(), 
+                "Khám tổng quát đã hoàn thành, bệnh nhân khỏe mạnh", 
+                Enum.AppointmentStatus.DONE);
+            todayDone1.checkInDate = calendar.getTime();
+            db.appointmentDao().insert(todayDone1);
+            
+            calendar.set(Calendar.HOUR_OF_DAY, 11);
+            calendar.set(Calendar.MINUTE, 0);
+            Appointment todayDone2 = createAppointment(doctorId, patientIds.get(1), calendar.getTime(), 
+                "Khám và kê đơn thuốc điều trị cảm cúm", 
+                Enum.AppointmentStatus.DONE);
+            todayDone2.checkInDate = calendar.getTime();
+            db.appointmentDao().insert(todayDone2);
+            
+            calendar.set(Calendar.HOUR_OF_DAY, 13);
+            calendar.set(Calendar.MINUTE, 30);
+            Appointment todayDone3 = createAppointment(doctorId, patientIds.get(2), calendar.getTime(), 
+                "Khám da liễu, điều trị mụn trứng cá", 
+                Enum.AppointmentStatus.DONE);
+            todayDone3.checkInDate = calendar.getTime();
+            db.appointmentDao().insert(todayDone3);
+            
+            // Today - ABSENT appointments (Vắng mặt)
+            calendar.set(Calendar.HOUR_OF_DAY, 16);
+            calendar.set(Calendar.MINUTE, 0);
+            Appointment todayAbsent1 = createAppointment(doctorId, patientIds.get(3), calendar.getTime(), 
+                "Bệnh nhân không đến khám theo lịch hẹn", 
+                Enum.AppointmentStatus.ABSENT);
+            db.appointmentDao().insert(todayAbsent1);
+            
+            // ========== UPCOMING APPOINTMENTS (Future) ==========
+            calendar = Calendar.getInstance();
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             calendar.set(Calendar.HOUR_OF_DAY, 9);
             calendar.set(Calendar.MINUTE, 0);
-            Appointment apt1 = createAppointment(doctorId, patientId, calendar.getTime(), "Khám định kỳ", Enum.AppointmentStatus.CONFIRMED);
-
-            // Upcoming appointment 2 - In 3 days
+            Appointment apt1 = createAppointment(doctorId, patientIds.get(0), calendar.getTime(), "Khám định kỳ", Enum.AppointmentStatus.CONFIRMED);
+            db.appointmentDao().insert(apt1);
+            
             calendar.add(Calendar.DAY_OF_MONTH, 2);
             calendar.set(Calendar.HOUR_OF_DAY, 14);
-            Appointment apt2 = createAppointment(doctorId, patientId, calendar.getTime(), "Tái khám", Enum.AppointmentStatus.CONFIRMED);
-
-            // Upcoming appointment 3 - In 5 days
+            Appointment apt2 = createAppointment(doctorId, patientIds.get(1), calendar.getTime(), "Tái khám", Enum.AppointmentStatus.CONFIRMED);
+            db.appointmentDao().insert(apt2);
+            
             calendar.add(Calendar.DAY_OF_MONTH, 2);
             calendar.set(Calendar.HOUR_OF_DAY, 10);
-            Appointment apt3 = createAppointment(doctorId, patientId, calendar.getTime(), "Xét nghiệm máu", Enum.AppointmentStatus.CONFIRMED);
-            // === SEED DATA FOR HISTORY & PRESCRIPTION TEST ===
+            Appointment apt3 = createAppointment(doctorId, patientIds.get(2), calendar.getTime(), "Xét nghiệm máu", Enum.AppointmentStatus.CONFIRMED);
+            db.appointmentDao().insert(apt3);
+            
+            // ========== HISTORY APPOINTMENTS (Past) ==========
+            // Completed appointments for history
             calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_MONTH, -7); // 1 tuần trước
-            Appointment completedAppointmentForTest = createAppointment(doctorId, patientId, calendar.getTime(), "Đau đầu, cảm cúm", Enum.AppointmentStatus.DONE);
-            long completedAppointmentId = db.appointmentDao().insert(completedAppointmentForTest);
-
-            // Tạo phiếu khám cho cuộc hẹn đã hoàn thành này
-            ExaminationForm form = new ExaminationForm();
-            form.appointmentId = completedAppointmentId;
-            form.patientId = patientId;
-            form.doctorId = doctorId;
-            form.diagnosis = "Cảm cúm siêu vi";
-            form.medicalHistory = "Bệnh nhân không có tiền sử bệnh lý đặc biệt.";
-            form.examinationDate = calendar.getTime();
-            form.grandTotal = 250000 + 12000 + 25000; // Tổng tiền tạm tính
-            long examinationId = db.examinationFormDao().insert(form);
-
-            // Thêm 1 dịch vụ vào phiếu khám
-            ServiceExaminationForm sef = new ServiceExaminationForm();
-            sef.examinationId = examinationId;
-            sef.serviceId = 2; // Xét nghiệm máu
-            sef.price = 250000;
-            sef.appointmentId = completedAppointmentId;
-            sef.patientId = patientId;
-            sef.doctorId = doctorId;
-            db.serviceExaminationFormDao().insert(sef);
-
-            // Thêm 2 loại thuốc vào phiếu khám
-            PrescriptionExaminationForm pef1 = new PrescriptionExaminationForm();
-            pef1.examinationId = examinationId;
-            pef1.prescriptionId = 1; // Paracetamol 500mg
-            pef1.price = 12000;
-            pef1.appointmentId = completedAppointmentId;
-            pef1.patientId = patientId;
-            pef1.doctorId = doctorId;
-            db.prescriptionExaminationFormDao().insert(pef1);
-
-            PrescriptionExaminationForm pef2 = new PrescriptionExaminationForm();
-            pef2.examinationId = examinationId;
-            pef2.prescriptionId = 2; // Amoxicillin 500mg
-            pef2.price = 25000;
-            pef2.appointmentId = completedAppointmentId;
-            pef2.patientId = patientId;
-            pef2.doctorId = doctorId;
-            db.prescriptionExaminationFormDao().insert(pef2);
-            // === END OF SEED DATA FOR TEST ===
-
-            // Completed appointments for stats
-            calendar.add(Calendar.DAY_OF_MONTH, -30);
-            for (int i = 0; i < 15; i++) {
-                Appointment completed = createAppointment(doctorId, patientId, calendar.getTime(), "Khám hoàn thành", Enum.AppointmentStatus.DONE);
+            calendar.add(Calendar.DAY_OF_MONTH, -1);
+            calendar.set(Calendar.HOUR_OF_DAY, 9);
+            calendar.set(Calendar.MINUTE, 0);
+            for (int i = 0; i < 5; i++) {
+                long patientId = patientIds.get(i % patientIds.size());
+                Appointment completed = createAppointment(doctorId, patientId, calendar.getTime(), 
+                    "Khám hoàn thành - " + (i + 1), Enum.AppointmentStatus.DONE);
+                completed.checkInDate = calendar.getTime();
                 db.appointmentDao().insert(completed);
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                calendar.set(Calendar.HOUR_OF_DAY, 9 + (i % 4));
+            }
+            
+            // More history - 2 weeks ago
+            calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, -14);
+            for (int i = 0; i < 10; i++) {
+                long patientId = patientIds.get(i % patientIds.size());
+                Appointment completed = createAppointment(doctorId, patientId, calendar.getTime(), 
+                    "Khám hoàn thành - Lịch sử", Enum.AppointmentStatus.DONE);
+                completed.checkInDate = calendar.getTime();
+                db.appointmentDao().insert(completed);
+                calendar.add(Calendar.DAY_OF_MONTH, -1);
+                calendar.set(Calendar.HOUR_OF_DAY, 8 + (i % 5));
+            }
+            
+            // History - PENDING appointments (past)
+            calendar = Calendar.getInstance();
+            calendar.add(Calendar.DAY_OF_MONTH, -5);
+            for (int i = 0; i < 3; i++) {
+                long patientId = patientIds.get(i % patientIds.size());
+                Appointment pending = createAppointment(doctorId, patientId, calendar.getTime(), 
+                    "Lịch hẹn đã qua - PENDING", Enum.AppointmentStatus.PENDING);
+                db.appointmentDao().insert(pending);
                 calendar.add(Calendar.DAY_OF_MONTH, -2);
             }
-
-            // Cancelled appointments for stats
+            
+            // History - ABSENT appointments
             calendar = Calendar.getInstance();
-            calendar.add(Calendar.DAY_OF_MONTH, -20);
-            for (int i = 0; i < 3; i++) {
-                Appointment cancelled = createAppointment(doctorId, patientId, calendar.getTime(), "Bệnh nhân hủy", Enum.AppointmentStatus.ABSENT);
-                db.appointmentDao().insert(cancelled);
-                calendar.add(Calendar.DAY_OF_MONTH, -3);
+            calendar.add(Calendar.DAY_OF_MONTH, -10);
+            for (int i = 0; i < 5; i++) {
+                long patientId = patientIds.get(i % patientIds.size());
+                Appointment absent = createAppointment(doctorId, patientId, calendar.getTime(), 
+                    "Bệnh nhân vắng mặt - Lịch sử", Enum.AppointmentStatus.ABSENT);
+                db.appointmentDao().insert(absent);
+                calendar.add(Calendar.DAY_OF_MONTH, -2);
             }
-
-            db.appointmentDao().insert(apt1);
-            db.appointmentDao().insert(apt2);
-            db.appointmentDao().insert(apt3);
-
+            
             // Seed Reviews for testing
-            Review review1 = createReview(doctorId, patientId, 1, 5, "Bác sĩ rất tận tình và chu đáo. Giải thích kỹ càng!");
-            Review review2 = createReview(doctorId, patientId, 2, 4, "Khám bệnh tốt, thời gian chờ hơi lâu");
-            Review review3 = createReview(doctorId, patientId, 3, 5, "Rất hài lòng với dịch vụ");
-            Review review4 = createReview(doctorId, patientId, 4, 5, "Bác sĩ chuyên nghiệp");
-            Review review5 = createReview(doctorId, patientId, 5, 4, "Tốt, sẽ quay lại");
-
+            Review review1 = createReview(doctorId, patientIds.get(0), 1, 5, "Bác sĩ rất tận tình và chu đáo. Giải thích kỹ càng!");
+            Review review2 = createReview(doctorId, patientIds.get(1), 2, 4, "Khám bệnh tốt, thời gian chờ hơi lâu");
+            Review review3 = createReview(doctorId, patientIds.get(2), 3, 5, "Rất hài lòng với dịch vụ");
+            Review review4 = createReview(doctorId, patientIds.get(3), 4, 5, "Bác sĩ chuyên nghiệp");
+            Review review5 = createReview(doctorId, patientIds.get(4), 5, 4, "Tốt, sẽ quay lại");
+            
             db.reviewDao().insert(review1);
             db.reviewDao().insert(review2);
             db.reviewDao().insert(review3);

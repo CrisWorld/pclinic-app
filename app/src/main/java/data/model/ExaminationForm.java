@@ -51,6 +51,7 @@ public class ExaminationForm {
     public String temperature;
     public String pulse;
     public String medicalHistory;
+    public String generalCondition; // Tổng trạng chung
     public String diagnosis;
     public Date examinationDate;
 }

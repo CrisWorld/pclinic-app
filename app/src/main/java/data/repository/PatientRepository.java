@@ -46,4 +46,13 @@ public class PatientRepository {
         });
         return result;
     }
+
+    // Synchronous method for direct use
+    public User getUserByPatientIdSync(long patientId) {
+        Patient patient = patientDao.findById(patientId);
+        if (patient != null) {
+            return userDao.findById(patient.userId);
+        }
+        return null;
+    }
 }

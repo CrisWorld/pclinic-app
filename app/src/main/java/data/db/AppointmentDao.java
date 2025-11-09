@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import data.dto.AppointmentWithDoctor;
+import data.dto.AppointmentWithPatient;
 import data.enums.Enum;
 import data.model.Appointment;
 
@@ -61,6 +62,19 @@ public interface AppointmentDao {
             "JOIN users u ON d.userId = u.id " +
             "WHERE a.id = :appointmentId LIMIT 1")
     AppointmentWithDoctor getDetail(long appointmentId);
+
+    @Query("SELECT a.*, " +
+            "u.fullName AS patientName, " +
+            "u.phone AS patientPhone, " +
+            "u.gender AS patientGender, " +
+            "u.birthDate AS patientBirthDate, " +
+            "p.code AS patientCode " +
+            "FROM appointments a " +
+            "JOIN patients p ON a.patientId = p.id " +
+            "JOIN users u ON p.userId = u.id " +
+            "WHERE a.doctorId = :doctorId AND DATE(a.startDate/1000, 'unixepoch') = :date " +
+            "ORDER BY a.startDate ASC")
+    List<AppointmentWithPatient> findByDoctorAndDateWithPatient(long doctorId, String date);
 
     @Query("SELECT a.*, u.fullName AS fullName " +
             "FROM appointments a " +

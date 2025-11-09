@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -22,20 +23,28 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.Executors;
 
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import data.db.DoctorDao;
 import data.enums.Enum;
 import data.model.Appointment;
+import data.model.Doctor;
 import data.repository.AppointmentRepository;
+import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
+import util.AuthUtils;
 
 @AndroidEntryPoint
 public class DoctorHistoryFragment extends Fragment {
 
     @Inject
     AppointmentRepository appointmentRepository;
+    
+    @Inject
+    DoctorDao doctorDao;
 
     private RecyclerView rvAppointments;
     private LinearLayout layoutEmpty;
@@ -48,7 +57,7 @@ public class DoctorHistoryFragment extends Fragment {
     private Enum.AppointmentStatus selectedStatus = null;
     private String selectedDate = null;
 
-    private long doctorId = 1; // TODO: Get from logged in user
+    private long doctorId = -1;
 
     @Nullable
     @Override
@@ -59,9 +68,31 @@ public class DoctorHistoryFragment extends Fragment {
         initViews(view);
         setupRecyclerView();
         setupFilters();
-        loadAppointments();
+        loadDoctorId();
 
         return view;
+    }
+
+    private void loadDoctorId() {
+        long userId = AuthUtils.getUserId(requireContext());
+        
+        if (userId == -1) {
+            Toasty.error(requireContext(), "Chưa đăng nhập", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        
+        Executors.newSingleThreadExecutor().execute(() -> {
+            Doctor doctor = doctorDao.findByUserId((int) userId);
+            
+            requireActivity().runOnUiThread(() -> {
+                if (doctor != null) {
+                    doctorId = doctor.id;
+                    loadAppointments();
+                } else {
+                    Toasty.error(requireContext(), "Không tìm thấy thông tin bác sĩ", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
     }
 
     private void initViews(View view) {

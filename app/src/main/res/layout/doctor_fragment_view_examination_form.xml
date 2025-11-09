@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundLight"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="4dp"
+            app:cardBackgroundColor="@color/surfaceLight"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnBack"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="48dp"
+                    android:minHeight="48dp"
+                    app:icon="@android:drawable/ic_menu_revert"
+                    app:iconTint="@color/colorPrimary"
+                    android:layout_marginEnd="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Xem Phiếu Khám"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="24sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvExaminationCode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Mã: --"
+                        android:textSize="12sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginTop="4dp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Patient Information Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dividerColor">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="24dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Thông tin bệnh nhân"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvPatientInfo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đang tải..."
+                    android:textSize="14sp"
+                    android:textColor="@color/textSecondary"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Examination Details Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dividerColor">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="24dp"
+                        android:background="@color/colorPrimary"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Thông tin khám bệnh"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/tvExaminationDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="--/--/----"
+                        android:textSize="12sp"
+                        android:textColor="@color/textSecondary"/>
+                </LinearLayout>
+
+                <!-- Examination Details -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dividerColor"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Medical History -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tiền sử bệnh án:"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/tvMedicalHistory"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- General Condition -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tổng trạng chung:"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textColor="@color/textPrimary"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:id="@+id/tvGeneralCondition"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="@color/textSecondary"
+                        android:layout_marginBottom="12dp"/>
+
+                    <!-- Vital Signs -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="4"
+                        android:layout_marginBottom="12dp">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginEnd="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Chiều cao"
+                                android:textSize="12sp"
+                                android:textColor="@color/textSecondary"/>
+                            <TextView
+                                android:id="@+id/tvHeight"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="-- cm"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/textPrimary"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginEnd="4dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Cân nặng"
+                                android:textSize="12sp"
+                                android:textColor="@color/textSecondary"/>
+                            <TextView
+                                android:id="@+id/tvWeight"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="-- kg"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/textPrimary"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginEnd="4dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mạch"
+                                android:textSize="12sp"
+                                android:textColor="@color/textSecondary"/>
+                            <TextView
+                                android:id="@+id/tvPulse"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="--"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/textPrimary"/>
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:layout_marginStart="8dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Nhiệt độ"
+                                android:textSize="12sp"
+                                android:textColor="@color/textSecondary"/>
+                            <TextView
+                                android:id="@+id/tvTemperature"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="--"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="@color/textPrimary"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <!-- Blood Pressure -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginBottom="12dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Huyết áp"
+                            android:textSize="12sp"
+                            android:textColor="@color/textSecondary"/>
+                        <TextView
+                            android:id="@+id/tvBloodPressure"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="--"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary"/>
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/dividerColor"
+                        android:layout_marginVertical="12dp"/>
+
+                    <!-- Diagnosis -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="8dp">
+
+                        <View
+                            android:layout_width="4dp"
+                            android:layout_height="20dp"
+                            android:background="@color/colorAccent"
+                            android:layout_marginEnd="12dp"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Chẩn đoán"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="@color/textPrimary"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/tvDiagnosis"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="--"
+                        android:textSize="14sp"
+                        android:textColor="@color/textSecondary"
+                        android:padding="12dp"
+                        android:background="@color/backgroundLight"
+                        android:layout_marginBottom="16dp"/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Services and Prescriptions Summary Card -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="3dp"
+            app:cardBackgroundColor="@color/surfaceLight"
+            app:strokeWidth="1dp"
+            app:strokeColor="@color/dividerColor">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="16dp">
+
+                    <View
+                        android:layout_width="4dp"
+                        android:layout_height="24dp"
+                        android:background="@color/info"
+                        android:layout_marginEnd="12dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dịch vụ &amp; Đơn thuốc"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="18sp"
+                        android:textStyle="bold"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvServicesPrescriptions"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Đang tải..."
+                    android:textSize="14sp"
+                    android:textColor="@color/textSecondary"/>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</ScrollView>

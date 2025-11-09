@@ -38,17 +38,6 @@ public class DoctorActivity extends AppCompatActivity {
         // Gán Toolbar làm ActionBar
         setSupportActionBar(toolbar);
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .replace(R.id.fragmentContainer, new DoctorOverviewFragment())
-                    .commit();
-
-            // 🔹 Đánh dấu menu “Tổng quan” là được chọn
-            navigationView.setCheckedItem(R.id.nav_overview);
-            toolbar.setTitle("Tổng quan");
-        }
-
         // Thêm toggle mở/đóng drawer
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, toolbar,
@@ -67,6 +56,7 @@ public class DoctorActivity extends AppCompatActivity {
                     .replace(R.id.fragmentContainer, new DoctorOverviewFragment())
                     .commit();
             navigationView.setCheckedItem(R.id.nav_overview);
+            toolbar.setTitle("Tổng quan");
         }
     }
 
