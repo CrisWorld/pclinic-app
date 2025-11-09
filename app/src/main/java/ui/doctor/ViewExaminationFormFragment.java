@@ -53,7 +53,9 @@ public class ViewExaminationFormFragment extends Fragment {
     public static ViewExaminationFormFragment newInstance(AppointmentWithPatient appointment) {
         ViewExaminationFormFragment fragment = new ViewExaminationFormFragment();
         Bundle args = new Bundle();
-        args.putLong("appointmentId", appointment.id);
+        long appointmentId = appointment != null ? appointment.id : 0;
+        args.putLong("appointmentId", appointmentId);
+        android.util.Log.d("ViewExaminationForm", "newInstance - appointment.id: " + appointmentId);
         fragment.setArguments(args);
         return fragment;
     }
@@ -75,6 +77,15 @@ public class ViewExaminationFormFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Reload data when returning to this fragment (e.g., after creating/editing)
+        if (getView() != null && appointmentId > 0) {
+            loadExaminationForm(getView());
+        }
+    }
+
     private void setupBackButton(View view) {
         View btnBack = view.findViewById(R.id.btnBack);
         if (btnBack != null) {
@@ -87,34 +98,145 @@ public class ViewExaminationFormFragment extends Fragment {
     }
 
     private void loadExaminationForm(View view) {
+        if (appointmentId == 0) {
+            displayErrorMessage(view, "Không có thông tin lịch hẹn (appointmentId = 0)");
+            return;
+        }
+
+        // Show loading state
+        showLoadingState(view);
+
         Executors.newSingleThreadExecutor().execute(() -> {
-            ExaminationForm form = examinationFormDao.findByAppointmentId(appointmentId);
-            if (form != null) {
-                // Load patient info
-                data.model.Patient patient = patientDao.findById(form.patientId);
-                data.model.User user = null;
-                if (patient != null) {
-                    user = userDao.findById(patient.userId);
+            try {
+                // Debug: Log appointmentId
+                android.util.Log.d("ViewExaminationForm", "Searching for examination form with appointmentId: " + appointmentId);
+                
+                // Try to find by appointmentId
+                ExaminationForm form = examinationFormDao.findByAppointmentId(appointmentId);
+                
+                // Debug: Log result
+                if (form != null) {
+                    android.util.Log.d("ViewExaminationForm", "Found examination form with id: " + form.id + ", appointmentId: " + form.appointmentId);
+                } else {
+                    android.util.Log.w("ViewExaminationForm", "No examination form found for appointmentId: " + appointmentId);
                 }
-
-                // Load services and prescriptions
-                List<ServiceExaminationForm> services = serviceExaminationFormDao.findByExaminationId(form.id);
-                List<PrescriptionExaminationForm> prescriptions = prescriptionExaminationFormDao.findByExaminationId(form.id);
-
-                final data.model.User finalUser = user;
-                final data.model.Patient finalPatient = patient;
-                requireActivity().runOnUiThread(() -> {
-                    displayExaminationForm(view, form, finalPatient, finalUser, services, prescriptions);
-                });
-            } else {
-                requireActivity().runOnUiThread(() -> {
-                    TextView tvInfo = view.findViewById(R.id.tvPatientInfo);
-                    if (tvInfo != null) {
-                        tvInfo.setText("Không tìm thấy phiếu khám");
+                
+                if (form != null) {
+                    // Load patient info
+                    data.model.Patient patient = patientDao.findById(form.patientId);
+                    data.model.User user = null;
+                    if (patient != null) {
+                        user = userDao.findById(patient.userId);
                     }
-                });
+
+                    // Load services and prescriptions
+                    List<ServiceExaminationForm> services = serviceExaminationFormDao.findByExaminationId(form.id);
+                    List<PrescriptionExaminationForm> prescriptions = prescriptionExaminationFormDao.findByExaminationId(form.id);
+
+                    final data.model.User finalUser = user;
+                    final data.model.Patient finalPatient = patient;
+                    
+                    if (getActivity() != null && isAdded()) {
+                        getActivity().runOnUiThread(() -> {
+                            if (isAdded() && getView() != null) {
+                                displayExaminationForm(getView(), form, finalPatient, finalUser, services, prescriptions);
+                            }
+                        });
+                    }
+                } else {
+                    if (getActivity() != null && isAdded()) {
+                        getActivity().runOnUiThread(() -> {
+                            if (isAdded() && getView() != null) {
+                                displayErrorMessage(getView(), "Không tìm thấy phiếu khám cho lịch hẹn này. Vui lòng tạo phiếu khám trước.");
+                            }
+                        });
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (getActivity() != null && isAdded()) {
+                    getActivity().runOnUiThread(() -> {
+                        if (isAdded() && getView() != null) {
+                            displayErrorMessage(getView(), "Lỗi khi tải phiếu khám: " + e.getMessage());
+                        }
+                    });
+                }
             }
         });
+    }
+
+    private void showLoadingState(View view) {
+        TextView tvPatientInfo = view.findViewById(R.id.tvPatientInfo);
+        if (tvPatientInfo != null) {
+            tvPatientInfo.setText("Đang tải thông tin...");
+        }
+        TextView tvServicesPrescriptions = view.findViewById(R.id.tvServicesPrescriptions);
+        if (tvServicesPrescriptions != null) {
+            tvServicesPrescriptions.setText("Đang tải...");
+        }
+    }
+
+    private void displayErrorMessage(View view, String message) {
+        TextView tvPatientInfo = view.findViewById(R.id.tvPatientInfo);
+        if (tvPatientInfo != null) {
+            tvPatientInfo.setText(message);
+        }
+        
+        // Clear other fields
+        TextView tvExaminationCode = view.findViewById(R.id.tvExaminationCode);
+        if (tvExaminationCode != null) {
+            tvExaminationCode.setText("Mã: --");
+        }
+        
+        TextView tvExaminationDate = view.findViewById(R.id.tvExaminationDate);
+        if (tvExaminationDate != null) {
+            tvExaminationDate.setText("--/--/----");
+        }
+        
+        TextView tvMedicalHistory = view.findViewById(R.id.tvMedicalHistory);
+        if (tvMedicalHistory != null) {
+            tvMedicalHistory.setText("--");
+        }
+        
+        TextView tvGeneralCondition = view.findViewById(R.id.tvGeneralCondition);
+        if (tvGeneralCondition != null) {
+            tvGeneralCondition.setText("--");
+        }
+        
+        TextView tvHeight = view.findViewById(R.id.tvHeight);
+        if (tvHeight != null) {
+            tvHeight.setText("-- cm");
+        }
+        
+        TextView tvWeight = view.findViewById(R.id.tvWeight);
+        if (tvWeight != null) {
+            tvWeight.setText("-- kg");
+        }
+        
+        TextView tvPulse = view.findViewById(R.id.tvPulse);
+        if (tvPulse != null) {
+            tvPulse.setText("--");
+        }
+        
+        TextView tvTemperature = view.findViewById(R.id.tvTemperature);
+        if (tvTemperature != null) {
+            tvTemperature.setText("--");
+        }
+        
+        TextView tvBloodPressure = view.findViewById(R.id.tvBloodPressure);
+        if (tvBloodPressure != null) {
+            tvBloodPressure.setText("--");
+        }
+        
+        TextView tvDiagnosis = view.findViewById(R.id.tvDiagnosis);
+        if (tvDiagnosis != null) {
+            tvDiagnosis.setText("--");
+        }
+        
+        TextView tvServicesPrescriptions = view.findViewById(R.id.tvServicesPrescriptions);
+        if (tvServicesPrescriptions != null) {
+            tvServicesPrescriptions.setText("Không có dữ liệu");
+        }
     }
 
     private void displayExaminationForm(View view, ExaminationForm form, data.model.Patient patient,

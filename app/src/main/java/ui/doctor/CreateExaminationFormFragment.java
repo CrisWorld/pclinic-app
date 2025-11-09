@@ -110,9 +110,13 @@ public class CreateExaminationFormFragment extends Fragment {
             patientGender = args.getString("patientGender");
             patientBirthDate = args.getLong("patientBirthDate");
             patientCode = args.getString("patientCode");
+            android.util.Log.d("CreateExaminationForm", "onCreateView - appointmentId: " + appointmentId + ", patientId: " + patientId + ", doctorId: " + doctorId);
+        } else {
+            android.util.Log.e("CreateExaminationForm", "onCreateView - No arguments found!");
         }
 
         initViews(view);
+        setupBackButton(view);
         loadPatientInfo();
         setupListeners();
         checkExistingExaminationForm();
@@ -264,6 +268,17 @@ public class CreateExaminationFormFragment extends Fragment {
         });
     }
 
+    private void setupBackButton(View view) {
+        View btnBack = view.findViewById(R.id.btnBack);
+        if (btnBack != null) {
+            btnBack.setOnClickListener(v -> {
+                if (getActivity() != null) {
+                    getActivity().onBackPressed();
+                }
+            });
+        }
+    }
+
     private void setupListeners() {
         btnSave.setOnClickListener(v -> saveExaminationForm());
         btnCreateService.setOnClickListener(v -> openAddServiceFragment());
@@ -272,16 +287,6 @@ public class CreateExaminationFormFragment extends Fragment {
             // TODO: Open edit patient dialog/fragment
             Toasty.info(requireContext(), "Tính năng chỉnh sửa bệnh nhân đang được phát triển", Toast.LENGTH_SHORT).show();
         });
-        
-        // Back button
-        View btnBack = getView() != null ? getView().findViewById(R.id.btnBack) : null;
-        if (btnBack != null) {
-            btnBack.setOnClickListener(v -> {
-                if (getActivity() != null) {
-                    getActivity().onBackPressed();
-                }
-            });
-        }
     }
 
     private void checkExistingExaminationForm() {
@@ -354,8 +359,19 @@ public class CreateExaminationFormFragment extends Fragment {
 
             if (examinationFormId > 0) {
                 examinationFormDao.update(form);
+                android.util.Log.d("CreateExaminationForm", "Updated examination form id: " + examinationFormId + ", appointmentId: " + form.appointmentId);
             } else {
                 examinationFormId = examinationFormDao.insert(form);
+                form.id = examinationFormId; // Set the id for verification
+                android.util.Log.d("CreateExaminationForm", "Inserted examination form id: " + examinationFormId + ", appointmentId: " + form.appointmentId);
+                
+                // Verify the insert by querying
+                ExaminationForm verify = examinationFormDao.findByAppointmentId(appointmentId);
+                if (verify != null) {
+                    android.util.Log.d("CreateExaminationForm", "Verified: Found examination form with id: " + verify.id);
+                } else {
+                    android.util.Log.e("CreateExaminationForm", "ERROR: Could not find examination form after insert! appointmentId: " + appointmentId);
+                }
             }
 
             requireActivity().runOnUiThread(() -> {

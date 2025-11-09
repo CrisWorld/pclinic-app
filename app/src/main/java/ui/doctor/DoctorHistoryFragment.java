@@ -28,11 +28,11 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import data.db.DoctorDao;
 import data.enums.Enum;
 import data.model.Appointment;
 import data.model.Doctor;
 import data.repository.AppointmentRepository;
-import data.repository.DoctorRepository;
 import es.dmoral.toasty.Toasty;
 import example.pclinic.com.R;
 import util.AuthUtils;
@@ -44,7 +44,7 @@ public class DoctorHistoryFragment extends Fragment {
     AppointmentRepository appointmentRepository;
     
     @Inject
-    DoctorRepository doctorRepository;
+    DoctorDao doctorDao;
 
     private RecyclerView rvAppointments;
     private LinearLayout layoutEmpty;
@@ -82,7 +82,7 @@ public class DoctorHistoryFragment extends Fragment {
         }
         
         Executors.newSingleThreadExecutor().execute(() -> {
-            Doctor doctor = doctorRepository.findByUserIdSync(userId);
+            Doctor doctor = doctorDao.findByUserId((int) userId);
             
             requireActivity().runOnUiThread(() -> {
                 if (doctor != null) {
