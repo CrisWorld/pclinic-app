@@ -84,8 +84,13 @@ public class AppointmentHistoryDetailFragment extends Fragment {
         });
 
         btnViewServices.setOnClickListener(view -> {
-            // TODO: Mở fragment dịch vụ (tương tự như đơn thuốc)
-            Toast.makeText(requireContext(), "Chức năng xem dịch vụ sẽ được cập nhật sau.", Toast.LENGTH_SHORT).show();
+            // Mở fragment dịch vụ
+            ServiceListFragment fragment = ServiceListFragment.newInstance(appointmentId);
+            requireActivity().getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.fragmentContainer, fragment)
+                    .addToBackStack(null)
+                    .commit();
         });
 
         return v;
