@@ -51,6 +51,14 @@ public class AppointmentHistoryFragment extends Fragment {
         txtEmpty = view.findViewById(R.id.txtEmpty);
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
 
+        // 👇 BƯỚC 1: TÌM TEXTVIEW TIÊU ĐỀ
+        TextView title = view.findViewById(R.id.tv_fragment_title); // Giả sử ID của TextView tiêu đề là tv_fragment_title
+
+        // 👇 BƯỚC 2: ĐẶT LẠI TIÊU ĐỀ
+        if (title != null) {
+            title.setText("Lịch sử khám bệnh");
+        }
+
         loadHistory();
         return view;
     }
@@ -68,6 +76,7 @@ public class AppointmentHistoryFragment extends Fragment {
 
             requireActivity().runOnUiThread(() -> {
                 if (appointmentList.isEmpty()) {
+                    txtEmpty.setText("Lịch sử khám của bạn trống.");
                     txtEmpty.setVisibility(View.VISIBLE);
                     recyclerView.setVisibility(View.GONE);
                 } else {
@@ -80,8 +89,8 @@ public class AppointmentHistoryFragment extends Fragment {
         });
     }
 
-    private void openDetail(Appointment appointment) {
-        AppointmentHistoryDetailFragment fragment = AppointmentHistoryDetailFragment.newInstance(appointment.id);
+    private void openDetail(AppointmentWithDoctor appointment) { // Nhận AppointmentWithDoctor
+        AppointmentDetailFragment fragment = AppointmentDetailFragment.newInstance(appointment.id);
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
                 .replace(R.id.fragmentContainer, fragment)

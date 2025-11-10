@@ -80,7 +80,7 @@ public class AppointmentListFragment extends Fragment {
         });
     }
 
-    private void openDetail(Appointment appointment) {
+    private void openDetail(AppointmentWithDoctor appointment) {
         AppointmentDetailFragment fragment = AppointmentDetailFragment.newInstance(appointment.id);
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()

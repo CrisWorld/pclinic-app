@@ -7,6 +7,7 @@
     android:background="@color/backgroundLight">
 
     <TextView
+        android:id="@+id/tv_fragment_title"
         android:text="Lịch hẹn sắp tới"
         android:textSize="22sp"
         android:textStyle="bold"
@@ -18,12 +19,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewAppointments"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:layout_weight="1"/>
 
     <TextView
         android:id="@+id/txtEmpty"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:text="Bạn chưa có lịch hẹn sắp tới."
         android:gravity="center"
         android:textSize="16sp"
