@@ -1,10 +1,10 @@
 package ui.patient;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.Locale;
 
 import data.dto.AppointmentWithDoctor;
+import data.enums.Enum;
 import data.model.Appointment;
 import example.pclinic.com.R;
 
 public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.ViewHolder> {
 
     public interface OnItemClickListener {
-        void onClick(Appointment appointment);
+        void onClick(AppointmentWithDoctor appointment);
     }
 
     private final List<AppointmentWithDoctor> list;
@@ -51,34 +52,71 @@ public class AppointmentAdapter extends RecyclerView.Adapter<AppointmentAdapter.
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtDoctor, txtDate, txtStatus;
         MaterialCardView card;
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+        TextView tvTimeSlot, tvStatusBadge, tvDoctorName, tvAppointmentDate, tvDescription;
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.getDefault());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             card = itemView.findViewById(R.id.cardAppointment);
-            txtDoctor = itemView.findViewById(R.id.txtDoctor);
-            txtDate = itemView.findViewById(R.id.txtDate);
-            txtStatus = itemView.findViewById(R.id.txtStatus);
+            tvTimeSlot = itemView.findViewById(R.id.tv_time_slot);
+            tvStatusBadge = itemView.findViewById(R.id.tv_status_badge);
+            tvDoctorName = itemView.findViewById(R.id.tv_doctor_name);
+            tvAppointmentDate = itemView.findViewById(R.id.tv_appointment_date);
+            tvDescription = itemView.findViewById(R.id.tv_description);
         }
 
         void bind(AppointmentWithDoctor ap, OnItemClickListener listener) {
-            txtDoctor.setText("Bác sĩ: " + ap.fullName);
-            txtDate.setText("Ngày: " + sdf.format(ap.startDate));
-            txtStatus.setText("Trạng thái: " + ap.status.name());
+            // Time slot
+            String timeSlot = timeFormat.format(ap.startDate) + " - " + timeFormat.format(ap.endDate);
+            tvTimeSlot.setText(timeSlot);
 
+            // Doctor info
+            tvDoctorName.setText("Bác sĩ: " + ap.fullName);
+            tvAppointmentDate.setText("Ngày: " + dateFormat.format(ap.startDate));
+
+            // Description
+            if (ap.description != null && !ap.description.isEmpty()) {
+                tvDescription.setText("Mô tả: " + ap.description);
+                tvDescription.setVisibility(View.VISIBLE);
+            } else {
+                tvDescription.setVisibility(View.GONE);
+            }
+
+            // Status
+            updateStatusBadge(ap.status);
+
+            // Click listener
             card.setOnClickListener(v -> {
-                Appointment appointment = new Appointment();
-                appointment.id = ap.id;
-                appointment.doctorId = ap.doctorId;
-                appointment.patientId = ap.patientId;
-                appointment.startDate = ap.startDate;
-                appointment.endDate = ap.endDate;
-                appointment.status = ap.status;
-                listener.onClick(appointment);
+                if (listener != null) {
+                    // 👇 KHÔNG CẦN TẠO OBJECT MỚI, TRUYỀN TRỰC TIẾP `ap`
+                    listener.onClick(ap);
+                }
             });
         }
 
+        private void updateStatusBadge(Enum.AppointmentStatus status) {
+            switch (status) {
+                case CONFIRMED:
+                    tvStatusBadge.setText("Đã xác nhận");
+                    tvStatusBadge.setBackgroundResource(R.drawable.status_badge_waiting); // Màu vàng
+                    break;
+                case DONE:
+                    tvStatusBadge.setText("Hoàn thành");
+                    tvStatusBadge.setBackgroundResource(R.drawable.status_badge_completed); // Màu xanh
+                    break;
+                case ABSENT:
+                    tvStatusBadge.setText("Vắng mặt");
+                    tvStatusBadge.setBackgroundResource(R.drawable.status_badge_absent); // Màu đỏ
+                    break;
+                case PENDING:
+                default:
+                    tvStatusBadge.setText("Chờ xác nhận");
+                    tvStatusBadge.setBackgroundResource(R.drawable.status_badge_pending); // Màu xám hoặc màu khác
+                    break;
+            }
+        }
     }
 }
