@@ -82,18 +82,19 @@ public class AppointmentHistoryFragment extends Fragment {
                 } else {
                     txtEmpty.setVisibility(View.GONE);
                     recyclerView.setVisibility(View.VISIBLE);
-                    adapter = new AppointmentAdapter(appointmentList, this::openDetail);
+                    adapter = new AppointmentAdapter(appointmentList, this::openExaminationForm);
                     recyclerView.setAdapter(adapter);
                 }
             });
         });
     }
 
-    private void openDetail(AppointmentWithDoctor appointment) { // Nhận AppointmentWithDoctor
-        AppointmentDetailFragment fragment = AppointmentDetailFragment.newInstance(appointment.id);
+    private void openExaminationForm(AppointmentWithDoctor appointment) {
+        // Mở fragment mới để xem chi tiết phiếu khám
+        PatientViewExaminationFormFragment fragment = PatientViewExaminationFormFragment.newInstance(appointment.id);
         requireActivity().getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragmentContainer, fragment)
+                .replace(R.id.fragmentContainer, fragment) // Thay R.id.fragment_container bằng ID container của bạn
                 .addToBackStack(null)
                 .commit();
     }

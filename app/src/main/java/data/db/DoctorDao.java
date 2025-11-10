@@ -26,8 +26,8 @@ public interface DoctorDao {
     List<Doctor> getAll();
 
     @Query("SELECT * FROM doctors WHERE id = :id LIMIT 1")
-    Doctor findById(int id);
+    Doctor findById(long id); // Thay int thành long
 
     @Query("SELECT * FROM doctors WHERE userId = :userId LIMIT 1")
-    Doctor findByUserId(int userId);
+    Doctor findByUserId(long userId);
 }
