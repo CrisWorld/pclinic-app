@@ -56,16 +56,27 @@ public class DoctorAppointmentFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,                             @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.doctor_fragment_appointment, container, false);
-        
+
         initViews(view);
         setupRecyclerView();
         setupFilters();
-        loadDoctorId(); // This will call loadTodayAppointments() after getting doctorId
-        
+
+        // Chỉ load doctorId lần đầu, onResume sẽ xử lý các lần sau
+        if (doctorId == -1) {
+            loadDoctorId();
+        }
+
         return view;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Khi quay lại fragment này, tải lại danh sách lịch khám
+        if (doctorId != -1) {
+            loadTodayAppointments();
+        }
     }
 
     private void initViews(View view) {

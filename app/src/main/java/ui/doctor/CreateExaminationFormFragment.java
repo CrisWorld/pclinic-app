@@ -32,6 +32,8 @@ import data.db.PatientDao;
 import data.db.PrescriptionExaminationFormDao;
 import data.db.ServiceExaminationFormDao;
 import data.db.UserDao;
+import data.enums.Enum; // 👈 QUAN TRỌNG: Phải import Enum
+import data.model.Appointment;
 import data.dto.AppointmentWithPatient;
 import data.model.ExaminationForm;
 import es.dmoral.toasty.Toasty;
@@ -315,68 +317,67 @@ public class CreateExaminationFormFragment extends Fragment {
     }
 
     private void saveExaminationForm() {
-        // Validate required fields
-        if (TextUtils.isEmpty(etMedicalHistory.getText())) {
-            Toasty.warning(requireContext(), "Vui lòng nhập tiền sử bệnh án", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(etGeneralCondition.getText())) {
-            Toasty.warning(requireContext(), "Vui lòng nhập tổng trạng chung", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (TextUtils.isEmpty(etHeight.getText())) {
-            Toasty.warning(requireContext(), "Vui lòng nhập chiều cao", Toast.LENGTH_SHORT).show();
+        String diagnosis = etDiagnosis.getText().toString().trim();
+        if (TextUtils.isEmpty(diagnosis)) {
+            Toasty.warning(requireContext(), "Vui lòng nhập chẩn đoán.", Toast.LENGTH_SHORT).show();
+            etDiagnosis.requestFocus();
             return;
         }
 
         Executors.newSingleThreadExecutor().execute(() -> {
-            ExaminationForm form;
-            if (examinationFormId > 0) {
-                // Update existing
-                form = examinationFormDao.findById(examinationFormId);
-            } else {
-                // Create new
-                form = new ExaminationForm();
-                form.appointmentId = appointmentId;
-                form.patientId = patientId;
-                form.doctorId = doctorId;
-                form.examinationCode = tvExaminationCode.getText().toString();
-                form.examinationDate = new Date();
-            }
-
-            // Update fields
-            form.medicalHistory = etMedicalHistory.getText().toString();
-            form.generalCondition = etGeneralCondition.getText().toString();
-            form.diagnosis = etDiagnosis.getText().toString();
-            form.height = etHeight.getText().toString();
-            form.weight = etWeight.getText().toString();
-            form.pulse = etPulse.getText().toString();
-            form.temperature = etTemperature.getText().toString();
-            form.bloodPressure = etBloodPressure.getText().toString();
-
-            // Calculate totals from services and prescriptions
-            calculateAndUpdateTotals(form);
-
-            if (examinationFormId > 0) {
-                examinationFormDao.update(form);
-                android.util.Log.d("CreateExaminationForm", "Updated examination form id: " + examinationFormId + ", appointmentId: " + form.appointmentId);
-            } else {
-                examinationFormId = examinationFormDao.insert(form);
-                form.id = examinationFormId; // Set the id for verification
-                android.util.Log.d("CreateExaminationForm", "Inserted examination form id: " + examinationFormId + ", appointmentId: " + form.appointmentId);
-                
-                // Verify the insert by querying
-                ExaminationForm verify = examinationFormDao.findByAppointmentId(appointmentId);
-                if (verify != null) {
-                    android.util.Log.d("CreateExaminationForm", "Verified: Found examination form with id: " + verify.id);
+            try {
+                ExaminationForm form;
+                if (examinationFormId > 0) {
+                    form = examinationFormDao.findById(examinationFormId);
                 } else {
-                    android.util.Log.e("CreateExaminationForm", "ERROR: Could not find examination form after insert! appointmentId: " + appointmentId);
+                    form = new ExaminationForm();
+                    form.appointmentId = appointmentId;
+                    form.patientId = patientId;
+                    form.doctorId = doctorId;
+                    form.examinationCode = tvExaminationCode.getText().toString();
+                    form.examinationDate = new Date();
+                }
+
+                // Update fields
+                form.medicalHistory = etMedicalHistory.getText().toString();
+                form.generalCondition = etGeneralCondition.getText().toString();
+                form.diagnosis = diagnosis;
+                form.height = etHeight.getText().toString();
+                form.weight = etWeight.getText().toString();
+                form.pulse = etPulse.getText().toString();
+                form.temperature = etTemperature.getText().toString();
+                form.bloodPressure = etBloodPressure.getText().toString();
+
+                calculateAndUpdateTotals(form);
+
+                if (examinationFormId > 0) {
+                    examinationFormDao.update(form);
+                } else {
+                    examinationFormId = examinationFormDao.insert(form);
+                }
+
+                // 👇 LOGIC QUAN TRỌNG: CẬP NHẬT TRẠNG THÁI LỊCH HẸN
+                Appointment appointment = appointmentDao.findById(appointmentId);
+                if (appointment != null && appointment.status != Enum.AppointmentStatus.DONE) {
+                    appointment.status = Enum.AppointmentStatus.DONE;
+                    appointmentDao.update(appointment);
+                }
+
+                // Quay về màn hình trước trên luồng UI
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        Toasty.success(requireContext(), "Lưu phiếu khám thành công!", Toast.LENGTH_SHORT).show();
+                        // Tự động quay về danh sách lịch hẹn
+                        getParentFragmentManager().popBackStack();
+                    });
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> Toasty.error(requireContext(), "Lỗi khi lưu phiếu khám.", Toast.LENGTH_LONG).show());
                 }
             }
-
-            requireActivity().runOnUiThread(() -> {
-                Toasty.success(requireContext(), "Lưu phiếu khám thành công", Toast.LENGTH_SHORT).show();
-            });
         });
     }
 
